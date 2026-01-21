@@ -1,15 +1,5 @@
 import requests
-import datetime
 import zoneinfo
-
-def is_work_period(dt: datetime) -> bool:
-    if dt.weekday() > 4:  # 0-4 = Mon-Fri
-        return False
-    # Define allowed time range
-    start = time(8, 0)   # 08:00
-    end = time(15, 0)    # 15:00
-
-    return start <= dt.time() <= end
 
 def main():
     # Set to your local timezone
@@ -18,29 +8,9 @@ def main():
 
     url = "https://csx.com.kh/api/v1/website/market-data/stock/prices"
     params = {"lang": "en"}
-    
-    today = datetime.today()
-    
-    # toDate = today (YYYYMMDD)
-    to_date = today.strftime("%Y%m%d")
-    
-    # fromDate = same day last month (or last valid day of that month)
-    year = today.year
-    month = today.month - 1
-    
-    if month == 0:
-        month = 12
-        year -= 1
-    
-    last_day_prev_month = calendar.monthrange(year, month)[1]
-    day = min(today.day, last_day_prev_month)
-    
-    from_date_dt = today.replace(year=year, month=month, day=day)
-    from_date = from_date_dt.strftime("%Y%m%d")
-    
     payload = {
-        "fromDate": from_date,
-        "toDate": to_date,
+        "fromDate": "2026-01-20",
+        "toDate": "2026-01-21",
         "symbol": "KH1000100003",
         "tradingMethod": "all",
         "board": "main"
