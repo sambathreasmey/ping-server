@@ -1,0 +1,29 @@
+name: High Frequency Script
+
+on:
+  repository_dispatch:
+    types: [ping_15s]
+  workflow_dispatch:
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Run My Script
+        run: python my_script.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add log.txt
+          git commit -m "Update log [skip ci]" || exit 0
+          git push
