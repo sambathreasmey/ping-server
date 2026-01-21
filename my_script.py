@@ -16,7 +16,10 @@ def main():
         "tradingMethod": "all",
         "board": "main"
     }
-    # Sample request: Fetching data from a public API
+
+    status_log = "Unknown"
+    change_log = "N/A"
+
     try:
         response = requests.post(
             url,
@@ -25,26 +28,40 @@ def main():
             timeout=30,
         )
         status = response.status_code
-        try:
-            data = response.json()
-            changeUpDown = data['data']['todayPrice']['changeUpDown']
-            print("changeUpDown: ", changeUpDown)
-            abc_new_tracking = data['data']['todayPrice']['currentPrice']
-            print("abc_tracking: ", abc_tracking)
-            change = data['data']['todayPrice']['change']
-            print("change: ", change)
-            changePercent = data['data']['todayPrice']['changePercent']
-            print("changePercent: ", changePercent)
-        except ValueError:
-            print("Response is not valid JSON")
+        status_log = str(status)
+
+        if response.ok:
+            try:
+                data = response.json()
+                # Accessing the data safely
+                today_price = data.get('data', {}).get('todayPrice', {})
+                
+                changeUpDown = today_price.get('changeUpDown', 'N/A')
+                abc_new_tracking = today_price.get('currentPrice', 'N/A')
+                change = today_price.get('change', 'N/A')
+                changePercent = today_price.get('changePercent', 'N/A')
+
+                print(f"changeUpDown: {changeUpDown}")
+                print(f"abc_tracking: {abc_new_tracking}") # Fixed variable name
+                print(f"change: {change}")
+                print(f"changePercent: {changePercent}")
+                
+                change_log = str(changeUpDown)
+            except ValueError:
+                print("Response is not valid JSON")
+                status_log = "JSON Error"
+        else:
+            print(f"Server returned error: {status}")
+
     except Exception as e:
-        status = f"Error: {e}"
+        status_log = f"Error: {e}"
+        print(status_log)
 
-    print(f"Executed at {now} - Status: {status}")
+    print(f"Executed at {now} - Status: {status_log}")
 
+    # Log results to file
     with open("log.txt", "a") as f:
-        f.write(f"{now} | Status: {status}\n")
-        f.write(f"{now} | Status: {changeUpDown}\n")
+        f.write(f"{now} | Status: {status_log} | Change: {change_log}\n")
 
 if __name__ == "__main__":
     main()
