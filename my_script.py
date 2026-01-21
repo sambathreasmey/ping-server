@@ -1,69 +1,79 @@
 import requests
+import calendar
+import os
 import datetime
 import zoneinfo
+from generate import create_card
+
+# --- CONFIG ---
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
+STATE_FILE = "last_price.txt"
+
+def get_last_price():
+    if os.path.exists(STATE_FILE):
+        with open(STATE_FILE, "r") as f:
+            return f.read().strip()
+    return "0"
+
+def save_current_price(price):
+    with open(STATE_FILE, "w") as f:
+        f.write(str(price))
+
+def is_work_period(dt):
+    if dt.weekday() > 4: return False
+    return 8 <= dt.hour < 15
 
 def main():
-    # Set to your local timezone
-    tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh") 
-    now = datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
+    tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
+    today = datetime.datetime.now(tz)
+    
+    if not is_work_period(today):
+        print("💤 Market is closed.")
+        return
 
+    abc_tracking = get_last_price()
     url = "https://csx.com.kh/api/v1/website/market-data/stock/prices"
-    params = {"lang": "en"}
+    
+    # Date Logic
+    to_date = today.strftime("%Y%m%d")
+    from_date = (today - datetime.timedelta(days=30)).strftime("%Y%m%d")
+
     payload = {
-        "fromDate": "20251221",
-        "toDate": "20260121",
+        "fromDate": from_date,
+        "toDate": to_date,
         "symbol": "KH1000100003",
         "tradingMethod": "all",
         "board": "main"
     }
 
-    status_log = "Unknown"
-    change_log = "N/A"
-    today_price_log = "N/A"
-
     try:
-        response = requests.post(
-            url,
-            params=params,
-            json=payload,
-            timeout=30,
-        )
-        status = response.status_code
-        status_log = str(status)
+        response = requests.post(url, params={"lang": "en"}, json=payload, timeout=30)
+        data = response.json()
+        price_data = data['data']['todayPrice']
+        
+        new_price = str(price_data['currentPrice'])
+        change = price_data['change']
+        changePercent = price_data['changePercent']
+        upDown = price_data['changeUpDown']
 
-        if response.ok:
-            try:
-                data = response.json()
-                # Accessing the data safely
-                today_price = data.get('data', {}).get('todayPrice', {})
-                
-                changeUpDown = today_price.get('changeUpDown', 'N/A')
-                abc_new_tracking = today_price.get('currentPrice', 'N/A')
-                change = today_price.get('change', 'N/A')
-                changePercent = today_price.get('changePercent', 'N/A')
-
-                print(f"changeUpDown: {changeUpDown}")
-                print(f"abc_tracking: {abc_new_tracking}") # Fixed variable name
-                print(f"change: {change}")
-                print(f"changePercent: {changePercent}")
-                
-                change_log = str(changeUpDown)
-                today_price_log = str(abc_new_tracking)
-            except ValueError:
-                print("Response is not valid JSON")
-                status_log = "JSON Error"
+        if new_price != abc_tracking:
+            print(f"✅ Price Changed: {new_price}")
+            img_path = create_card(upDown, new_price, f"{changePercent}%", change)
+            
+            # Send to Telegram
+            caption = f"<b>ABC {new_price} រៀល</b> | {upDown} {change} ({changePercent}%)"
+            with open(img_path, "rb") as img:
+                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                              data={"chat_id": SEND_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
+                              files={"photo": img})
+            
+            save_current_price(new_price)
         else:
-            print(f"Server returned error: {status}")
+            print("No price change.")
 
     except Exception as e:
-        status_log = f"Error: {e}"
-        print(status_log)
-
-    print(f"Executed at {now} - Status: {status_log}")
-
-    # Log results to file
-    with open("log.txt", "a") as f:
-        f.write(f"{now} | Status: {status_log} | Change: {change_log} | Price: {today_price_log}\n")
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
