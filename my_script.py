@@ -1,12 +1,12 @@
 import datetime
-import os
+import zoneinfo
 
 def main():
-    # Get current time
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"Script executed at: {now}")
+    tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh") 
+    now = datetime.datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
+    
+    print(f"Script executed at (Local Time): {now}")
 
-    # (Optional) Log the execution to a file
     with open("log.txt", "a") as f:
         f.write(f"Executed at {now}\n")
 
