@@ -75,6 +75,9 @@ def main():
                               files={"photo": img})
             
             save_current_price(new_price)
+            # Log results to file
+            with open("log.txt", "a") as f:
+                f.write(f"{to_date} | Status: {up_down_equal} | Price: {new_price} | Change: {change} | ChangePercent: {changePercent}\n")
         else:
             print("No price change.")
 
