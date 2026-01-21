@@ -60,9 +60,15 @@ def main():
         if new_price != abc_tracking:
             print(f"✅ Price Changed: {new_price}")
             img_path = create_card(upDown, new_price, f"{changePercent}%", change)
-            
+            changeUpDown = ""
             # Send to Telegram
-            caption = f"<b>ABC {new_price} រៀល</b> | {upDown} {change} ({changePercent}%)"
+            if changeUpDown == "up":
+                up_down_equal = "🔺ឡើង"
+            elif changeUpDown == "down":
+                up_down_equal = "🔻ចុះ"
+            else:
+                up_down_equal = "▫️ស្មើរ"
+            caption = f"<b>ABC {new_price} រៀល</b> {up_down_equal} {change} | <b>{changePercent}%</b>"
             with open(img_path, "rb") as img:
                 requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                               data={"chat_id": SEND_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
