@@ -60,11 +60,11 @@ def main():
         if new_price != abc_tracking:
             print(f"✅ Price Changed: {new_price}")
             img_path = create_card(upDown, new_price, f"{changePercent}%", change)
-            changeUpDown = ""
+            up_down_equal = ""
             # Send to Telegram
-            if changeUpDown == "up":
+            if upDown == "up":
                 up_down_equal = "🔺ឡើង"
-            elif changeUpDown == "down":
+            elif upDown == "down":
                 up_down_equal = "🔻ចុះ"
             else:
                 up_down_equal = "▫️ស្មើរ"
