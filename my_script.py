@@ -5,6 +5,8 @@ import datetime
 import zoneinfo
 from generate import create_card
 
+import time
+
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
@@ -93,4 +95,9 @@ def main():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    main()
+    # main()
+    start_time = time.time()
+    # Run for 280 seconds (approx 4.5 minutes)
+    while time.time() - start_time < 280:
+        main() # Your existing function
+        time.sleep(15)
