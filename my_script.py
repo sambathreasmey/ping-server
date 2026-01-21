@@ -2,6 +2,15 @@ import requests
 import datetime
 import zoneinfo
 
+def is_work_period(dt: datetime) -> bool:
+    if dt.weekday() > 4:  # 0-4 = Mon-Fri
+        return False
+    # Define allowed time range
+    start = time(8, 0)   # 08:00
+    end = time(15, 0)    # 15:00
+
+    return start <= dt.time() <= end
+
 def main():
     # Set to your local timezone
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh") 
@@ -14,15 +23,6 @@ def main():
     
     # toDate = today (YYYYMMDD)
     to_date = today.strftime("%Y%m%d")
-    
-    def is_work_period(dt: datetime) -> bool:
-        if dt.weekday() > 4:  # 0-4 = Mon-Fri
-            return False
-        # Define allowed time range
-        start = time(8, 0)   # 08:00
-        end = time(15, 0)    # 15:00
-    
-        return start <= dt.time() <= end
     
     # fromDate = same day last month (or last valid day of that month)
     year = today.year
