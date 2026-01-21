@@ -10,8 +10,8 @@ def main():
     url = "https://csx.com.kh/api/v1/website/market-data/stock/prices"
     params = {"lang": "en"}
     payload = {
-        "fromDate": "2026-01-20",
-        "toDate": "2026-01-21",
+        "fromDate": "20251221",
+        "toDate": "20260121",
         "symbol": "KH1000100003",
         "tradingMethod": "all",
         "board": "main"
@@ -19,6 +19,7 @@ def main():
 
     status_log = "Unknown"
     change_log = "N/A"
+    today_price_log = "N/A"
 
     try:
         response = requests.post(
@@ -47,6 +48,7 @@ def main():
                 print(f"changePercent: {changePercent}")
                 
                 change_log = str(changeUpDown)
+                today_price_log = str(abc_new_tracking)
             except ValueError:
                 print("Response is not valid JSON")
                 status_log = "JSON Error"
@@ -61,7 +63,7 @@ def main():
 
     # Log results to file
     with open("log.txt", "a") as f:
-        f.write(f"{now} | Status: {status_log} | Change: {change_log}\n")
+        f.write(f"{now} | Status: {status_log} | Change: {change_log} | Price: {today_price_log}\n")
 
 if __name__ == "__main__":
     main()
