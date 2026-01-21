@@ -28,7 +28,7 @@ def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
     
-    if is_work_period(today):
+    if not is_work_period(today):
         print("💤 Market is closed.")
         return
 
@@ -57,7 +57,7 @@ def main():
         changePercent = price_data['changePercent']
         upDown = price_data['changeUpDown']
 
-        if new_price == abc_tracking:
+        if new_price != abc_tracking:
             print(f"✅ Price Changed: {new_price}")
             img_path = create_card(upDown, new_price, f"{changePercent}%", change)
             up_down_equal = ""
