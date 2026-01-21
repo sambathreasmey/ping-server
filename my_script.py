@@ -69,10 +69,18 @@ def main():
             else:
                 up_down_equal = "▫️ស្មើរ"
             caption = f"<b>ABC {new_price} រៀល</b> {up_down_equal} {change} | <b>{changePercent}%</b>"
-            with open(img_path, "rb") as img:
-                requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
-                              data={"chat_id": SEND_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
-                              files={"photo": img})
+            try:
+                with open(img_path, "rb") as img:
+                    response = requests.post(
+                        f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
+                        data={"chat_id": SEND_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
+                        files={"photo": img}
+                    )
+                    print(f"Telegram response: {response.status_code}")
+            finally:
+                if os.path.exists(img_path):
+                    os.remove(img_path)
+                    print(f"🗑️ Deleted local file: {img_path}")
             
             save_current_price(new_price)
             # Log results to file
