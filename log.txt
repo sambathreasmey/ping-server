@@ -1,2 +1,3 @@
 20260121 | Status: 🔺ឡើង | Price: 7,320 | Change: 80 | ChangePercent: 1.10
 20260122 | Status: 🔺ឡើង | Price: 7,340 | Change: 20 | ChangePercent: 0.27
+20260122 | Status: 🔺ឡើង | Price: 7,360 | Change: 40 | ChangePercent: 0.55
