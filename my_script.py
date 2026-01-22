@@ -23,6 +23,28 @@ def is_work_period(dt):
     if dt.weekday() > 4: return False
     return 8 <= dt.hour < 15
 
+def get_khmer_now():
+    tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
+    now = datetime.datetime.now(tz)
+    
+    # Khmer Mappings
+    months_kh = {
+        "Jan": "មករា", "Feb": "កុម្ភៈ", "Mar": "មីនា", "Apr": "មេសា",
+        "May": "ឧសភា", "Jun": "មិថុនា", "Jul": "កក្កដា", "Aug": "សីហា",
+        "Sep": "កញ្ញា", "Oct": "តុលា", "Nov": "វិច្ឆិកា", "Dec": "ធ្នូ"
+    }
+    am_pm_kh = {"AM": "ព្រឹក", "PM": "ល្ងាច"}
+
+    # Get standard parts
+    year = now.strftime("%Y")
+    month = months_kh[now.strftime("%b")]
+    day = now.strftime("%d")
+    time_str = now.strftime("%I:%M:%S")
+    period = am_pm_kh[now.strftime("%p")]
+
+    # Format: 2026 មករា 22 | 09:27:54 ព្រឹក
+    return f"{year} {month} {day} | {time_str} {period}"
+
 def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
@@ -84,7 +106,7 @@ def main():
             save_current_price(new_price)
             # Log results to file
             with open("log.txt", "a") as f:
-                f.write(f"{to_date} | Status: {up_down_equal} | Price: {new_price} | Change: {change} | ChangePercent: {changePercent}\n")
+                f.write(f"{get_khmer_now()} | Status: {up_down_equal} | Price: {new_price} | Change: {change} | ChangePercent: {changePercent}\n")
         else:
             print("No price change.")
 
