@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 
-def create_card(status, value, percent, change):
+def create_card(symbol, status, value, percent, change):
     # Colors for each card type
     colors = {
         "UP":    "#4AFF47",  # green
@@ -51,7 +51,7 @@ def create_card(status, value, percent, change):
         font_main = ImageFont.load_default()
 
     # Draw text (scaled positions)
-    draw.text((35 * SCALE, 15 * SCALE), "ABC", fill=color, font=font_main)
+    draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
     draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
     draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
 
