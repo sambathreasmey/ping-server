@@ -19,8 +19,9 @@ jobs:
           cache: 'pip' # <--- This automatically caches your requirements
 
       - name: Install dependencies
+        # This line says: "Only run this if the cache was NOT found"
+        if: steps.setup-python.outputs.cache-hit != 'true'
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run Script
