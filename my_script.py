@@ -9,7 +9,6 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 STATE_FILE = "last_price.txt"
 
-has_updates = True
 def check_any_commit(has_updates):
     if "GITHUB_OUTPUT" in os.environ:
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
@@ -85,6 +84,7 @@ def main():
         changePercent = price_data['changePercent']
         upDown = price_data['changeUpDown']
 
+        has_updates = True
         if new_price != abc_tracking:
             print(f"✅ Price Changed: {new_price}")
             img_path = create_card(upDown, new_price, f"{changePercent}%", change)
