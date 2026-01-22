@@ -1,11 +1,8 @@
 import requests
-import calendar
 import os
 import datetime
 import zoneinfo
 from generate import create_card
-
-import time
 
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -95,9 +92,4 @@ def main():
         print(f"Error: {e}")
 
 if __name__ == "__main__":
-    # main()
-    start_time = time.time()
-    # Run for 280 seconds (approx 4.5 minutes)
-    while time.time() - start_time < 280:
-        main() # Your existing function
-        time.sleep(15)
+    main()

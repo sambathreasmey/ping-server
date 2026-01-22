@@ -1,11 +1,8 @@
 name: CSX Stock Tracker
 
 on:
-  # repository_dispatch:
-  #   types: [ping_15s]
-  # workflow_dispatch:
-  schedule:
-    - cron: '*/5 * * * *'  # Runs every 5 minutes
+  repository_dispatch:
+    types: [ping_15s]
   workflow_dispatch:
 
 jobs:
