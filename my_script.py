@@ -9,6 +9,13 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 STATE_FILE = "last_price.txt"
 
+has_updates = True
+def check_any_commit(has_updates):
+    if "GITHUB_OUTPUT" in os.environ:
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            # We convert the Python True/False to a string "true"/"false"
+            f.write(f"should_save={str(has_updates).lower()}\n")
+
 def get_last_price():
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r") as f:
@@ -108,8 +115,9 @@ def main():
             with open("log.txt", "a") as f:
                 f.write(f"{get_khmer_now()} | Status: {up_down_equal} | Price: {new_price} | Change: {change} | ChangePercent: {changePercent}\n")
         else:
+            has_updates = False
             print("No price change.")
-
+        check_any_commit(has_updates)
     except Exception as e:
         print(f"Error: {e}")
 

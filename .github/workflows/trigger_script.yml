@@ -25,12 +25,15 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Script
+        id: run_script
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           SEND_CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
         run: python my_script.py
 
       - name: Save State
+        # This step only runs if 'should_save' was set to 'true' in Python
+        if: steps.run_script.outputs.should_save == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
