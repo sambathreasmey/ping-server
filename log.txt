@@ -70,3 +70,4 @@
 2026 មករា 23 | 01:43:50 ល្ងាច | DBDE | Status: 🔻ចុះ | Price: 2,160 | Change: 30 | ChangePercent: 1.37
 2026 មករា 23 | 01:49:53 ល្ងាច | PCG | Status: ▫️ស្មើរ | Price: 4,800 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 01:50:54 ល្ងាច | PCG | Status: 🔻ចុះ | Price: 4,780 | Change: 20 | ChangePercent: 0.42
+2026 មករា 23 | 01:55:16 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
