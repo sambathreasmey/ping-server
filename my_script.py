@@ -56,8 +56,8 @@ def main():
         ))
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
-            if issueName not in ALLOWED_ISSUE:
-                continue
+            # if issueName not in ALLOWED_ISSUE:
+            #     continue
             currentPrice = mainBoardStockTrade['currentPrice']
             change = mainBoardStockTrade['change']
             changeUpDown = mainBoardStockTrade['changeUpDown']
