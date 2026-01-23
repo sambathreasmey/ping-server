@@ -72,3 +72,4 @@
 2026 មករា 23 | 01:50:54 ល្ងាច | PCG | Status: 🔻ចុះ | Price: 4,780 | Change: 20 | ChangePercent: 0.42
 2026 មករា 23 | 01:55:16 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 01:56:18 ល្ងាច | MJQE | Status: 🔻ចុះ | Price: 2,040 | Change: 10 | ChangePercent: 0.49
+2026 មករា 23 | 01:57:35 ល្ងាច | CGSM | Status: ▫️ស្មើរ | Price: 2,500 | Change: 0 | ChangePercent: 0.00
