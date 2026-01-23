@@ -73,7 +73,7 @@ def main():
                     up_down_equal = "🔻ចុះ"
                 else:
                     up_down_equal = "▫️ស្មើរ"
-                caption = f"<b>ABC {currentPrice} រៀល</b> {up_down_equal} {change} | <b>{percentChange}%</b>"
+                caption = f"<b>{issueName} {currentPrice} រៀល</b> {up_down_equal} {change} | <b>{percentChange}%</b>"
                 try:
                     with open(img_path, "rb") as img:
                         response = requests.post(
