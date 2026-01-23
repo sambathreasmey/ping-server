@@ -89,3 +89,4 @@
 2026 មករា 23 | 02:19:10 ល្ងាច | DBDE | Status: 🔻ចុះ | Price: 2,160 | Change: 30 | ChangePercent: 1.37
 2026 មករា 23 | 02:19:30 ល្ងាច | PPSP | Status: 🔻ចុះ | Price: 2,090 | Change: 10 | ChangePercent: 0.48
 2026 មករា 23 | 02:22:35 ល្ងាច | MJQE | Status: ▫️ស្មើរ | Price: 2,050 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 02:26:13 ល្ងាច | PCG | Status: 🔻ចុះ | Price: 4,780 | Change: 20 | ChangePercent: 0.42
