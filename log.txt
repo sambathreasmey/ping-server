@@ -97,3 +97,4 @@
 2026 មករា 23 | 02:33:44 ល្ងាច | ABC | Status: 🔻ចុះ | Price: 7,260 | Change: 20 | ChangePercent: 0.27
 2026 មករា 23 | 02:35:39 ល្ងាច | MJQE | Status: 🔻ចុះ | Price: 2,040 | Change: 10 | ChangePercent: 0.49
 2026 មករា 23 | 02:36:40 ល្ងាច | PWSA | Status: ▫️ស្មើរ | Price: 6,420 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 02:37:18 ល្ងាច | GTI | Status: ▫️ស្មើរ | Price: 8,200 | Change: 0 | ChangePercent: 0.00
