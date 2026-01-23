@@ -46,3 +46,4 @@
 2026 មករា 23 | 11:58:42 ព្រឹក | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 12:03:23 ល្ងាច | ABC | Status: 🔺ឡើង | Price: 7,300 | Change: 20 | ChangePercent: 0.27
 2026 មករា 23 | 12:22:53 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 12:24:19 ល្ងាច | ABC | Status: 🔺ឡើង | Price: 7,300 | Change: 20 | ChangePercent: 0.27
