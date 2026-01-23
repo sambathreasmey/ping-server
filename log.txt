@@ -106,3 +106,5 @@
 2026 មករា 23 | 02:49:06 ល្ងាច | ABC | Status: 🔻ចុះ | Price: 7,260 | Change: 20 | ChangePercent: 0.27
 2026 មករា 23 | 02:49:07 ល្ងាច | JSL | Status: 🔻ចុះ | Price: 2,450 | Change: 30 | ChangePercent: 1.21
 2026 មករា 23 | 02:49:25 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 02:50:06 ល្ងាច | CGSM | Status: 🔺ឡើង | Price: 2,510 | Change: 10 | ChangePercent: 0.40
+2026 មករា 23 | 02:50:07 ល្ងាច | PCG | Status: 🔺ឡើង | Price: 4,820 | Change: 20 | ChangePercent: 0.42
