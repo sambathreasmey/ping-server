@@ -68,3 +68,4 @@
 2026 មករា 23 | 01:35:26 ល្ងាច | JSL | Status: 🔻ចុះ | Price: 2,460 | Change: 20 | ChangePercent: 0.81
 2026 មករា 23 | 01:35:34 ល្ងាច | PCG | Status: 🔺ឡើង | Price: 4,820 | Change: 20 | ChangePercent: 0.42
 2026 មករា 23 | 01:43:50 ល្ងាច | DBDE | Status: 🔻ចុះ | Price: 2,160 | Change: 30 | ChangePercent: 1.37
+2026 មករា 23 | 01:49:53 ល្ងាច | PCG | Status: ▫️ស្មើរ | Price: 4,800 | Change: 0 | ChangePercent: 0.00
