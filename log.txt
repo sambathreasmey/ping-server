@@ -58,3 +58,12 @@
 2026 មករា 23 | 01:25:11 ល្ងាច | ABC | Status: 🔺ឡើង | Price: 7,300 | Change: 20 | ChangePercent: 0.27
 2026 មករា 23 | 01:26:49 ល្ងាច | PWSA | Status: ▫️ស្មើរ | Price: 6,420 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 01:32:30 ល្ងាច | PWSA | Status: 🔺ឡើង | Price: 6,440 | Change: 20 | ChangePercent: 0.31
+2026 មករា 23 | 01:35:06 ល្ងាច | PPAP | Status: 🔻ចុះ | Price: 14,140 | Change: 80 | ChangePercent: 0.56
+2026 មករា 23 | 01:35:06 ល្ងាច | PPSP | Status: ▫️ស្មើរ | Price: 2,100 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 01:35:07 ល្ងាច | PAS | Status: ▫️ស្មើរ | Price: 13,060 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 01:35:08 ល្ងាច | PEPC | Status: 🔺ឡើង | Price: 2,800 | Change: 10 | ChangePercent: 0.36
+2026 មករា 23 | 01:35:23 ល្ងាច | MJQE | Status: ▫️ស្មើរ | Price: 2,050 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 01:35:24 ល្ងាច | CGSM | Status: 🔺ឡើង | Price: 2,510 | Change: 10 | ChangePercent: 0.40
+2026 មករា 23 | 01:35:25 ល្ងាច | DBDE | Status: 🔻ចុះ | Price: 2,170 | Change: 20 | ChangePercent: 0.91
+2026 មករា 23 | 01:35:26 ល្ងាច | JSL | Status: 🔻ចុះ | Price: 2,460 | Change: 20 | ChangePercent: 0.81
+2026 មករា 23 | 01:35:34 ល្ងាច | PCG | Status: 🔺ឡើង | Price: 4,820 | Change: 20 | ChangePercent: 0.42
