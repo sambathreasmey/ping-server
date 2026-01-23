@@ -76,3 +76,5 @@
 2026 មករា 23 | 02:02:39 ល្ងាច | PPSP | Status: 🔻ចុះ | Price: 2,090 | Change: 10 | ChangePercent: 0.48
 2026 មករា 23 | 02:03:59 ល្ងាច | GTI | Status: 🔺ឡើង | Price: 8,300 | Change: 100 | ChangePercent: 1.22
 2026 មករា 23 | 02:05:04 ល្ងាច | MJQE | Status: ▫️ស្មើរ | Price: 2,050 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 02:05:41 ល្ងាច | PPAP | Status: 🔻ចុះ | Price: 14,200 | Change: 20 | ChangePercent: 0.14
+2026 មករា 23 | 02:05:42 ល្ងាច | PPSP | Status: ▫️ស្មើរ | Price: 2,100 | Change: 0 | ChangePercent: 0.00
