@@ -54,3 +54,4 @@
 2026 មករា 23 | 01:19:05 ល្ងាច | ABC | Status: 🔺ឡើង | Price: 7,300 | Change: 20 | ChangePercent: 0.27
 2026 មករា 23 | 01:20:45 ល្ងាច | PWSA | Status: ▫️ស្មើរ | Price: 6,420 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 01:21:05 ល្ងាច | PWSA | Status: 🔺ឡើង | Price: 6,440 | Change: 20 | ChangePercent: 0.31
+2026 មករា 23 | 01:23:54 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
