@@ -102,3 +102,4 @@
 2026 មករា 23 | 02:37:54 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 02:40:42 ល្ងាច | MJQE | Status: ▫️ស្មើរ | Price: 2,050 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 02:41:01 ល្ងាច | PPSP | Status: ▫️ស្មើរ | Price: 2,100 | Change: 0 | ChangePercent: 0.00
+2026 មករា 23 | 02:48:29 ល្ងាច | PWSA | Status: 🔺ឡើង | Price: 6,440 | Change: 20 | ChangePercent: 0.31
