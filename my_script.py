@@ -49,8 +49,8 @@ def main():
     url = "https://csx.com.kh/api/v1/website/home/main-and-growth-board-stocks-trades"
     try:
         response = requests.get(url, params={"lang": "en"}, timeout=30)
-        json = response.json()
-        data = json['data']
+        jsonRes = response.json()
+        data = jsonRes['data']
         mainBoardStockTrades = list(chain(
             data.get('mainBoardStockTrades', []),
             data.get('growthBoardStockTrades', [])
