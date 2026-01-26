@@ -56,7 +56,7 @@ def main():
     
     if not is_work_period(today):
         print("💤 Market is closed.")
-        time.sleep(300)
+        # time.sleep(300)
         callback()
         return
 

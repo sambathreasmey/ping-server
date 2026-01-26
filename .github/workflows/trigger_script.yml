@@ -41,6 +41,7 @@ jobs:
 
   callback:
     runs-on: ubuntu-latest
+    needs: run-tracker
     steps:
       - name: Callback
         # if: steps.tracker_step.outputs.callback_data != '[]' # Only run if stocks were found
