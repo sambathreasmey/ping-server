@@ -31,7 +31,18 @@ jobs:
           SEND_CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
         run: python my_script.py
 
-      - name: Respond with JSON Data
+      - name: Save State
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add log.txt state.json
+          git commit -m "Update tracker state [skip ci]" || exit 0
+          git push
+
+  callback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Callback
         # if: steps.tracker_step.outputs.callback_data != '[]' # Only run if stocks were found
         run: |
           curl -X POST "${{ github.event.client_payload.callback_url || 'https://sambathreasmey1app.pythonanywhere.com/trigger_callback' }}" \
@@ -40,11 +51,3 @@ jobs:
             "status": "success",
             "data": ${{ steps.tracker_step.outputs.callback_data }}
           }'
-
-      - name: Save State
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add log.txt state.json
-          git commit -m "Update tracker state [skip ci]" || exit 0
-          git push
