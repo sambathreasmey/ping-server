@@ -9,7 +9,7 @@ jobs:
   run-tracker:
     runs-on: ubuntu-latest
     outputs:
-      callback_data: ${{ steps.tracker_step.outputs.callback_data }}
+      final_data: ${{ steps.tracker_step.outputs.callback_data }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,5 +52,5 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
-            "data": ${{ needs.run-tracker.outputs.callback_data || "[]" }}
+            "data": ${{ needs.run-tracker.outputs.final_data || "[]" }}
           }'
