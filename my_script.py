@@ -110,6 +110,7 @@ def main():
             with open(os.environ["GITHUB_OUTPUT"], "a") as f:
                 # We use json.dumps to turn the list into a string
                 json_string = json.dumps(callbackData)
+                print(json_string)
                 f.write(f"callback_data={json_string}\n")
         # price_data = data['data']['todayPrice']
         
