@@ -32,7 +32,7 @@ jobs:
         run: python my_script.py
 
       - name: Respond with JSON Data
-        if: steps.tracker_step.outputs.callback_data != '[]' # Only run if stocks were found
+        # if: steps.tracker_step.outputs.callback_data != '[]' # Only run if stocks were found
         run: |
           curl -X POST "${{ github.event.client_payload.callback_url || 'https://sambathreasmey1app.pythonanywhere.com/trigger_callback' }}" \
           -H "Content-Type: application/json" \
