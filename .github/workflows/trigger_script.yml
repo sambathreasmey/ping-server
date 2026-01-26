@@ -59,7 +59,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
-            "data": ${{ needs.run-tracker.outputs.callback_data || "[]" }}
+            "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
 
       - name: Telegram Notification
