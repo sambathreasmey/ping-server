@@ -6,6 +6,7 @@ import zoneinfo
 from generate import create_card
 from price_management import update_if_changed
 import json
+import time
 
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -39,6 +40,7 @@ def get_khmer_now():
     return f"{year} {month} {day} | {time_str} {period}"
 
 def callback(data=None):
+    time.sleep(60)
     if data is None:
         data = []
     if "GITHUB_OUTPUT" in os.environ:
