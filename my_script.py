@@ -5,6 +5,7 @@ import datetime
 import zoneinfo
 from generate import create_card
 from price_management import update_if_changed
+import json
 
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
