@@ -108,3 +108,7 @@
 2026 មករា 23 | 02:49:25 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,280 | Change: 0 | ChangePercent: 0.00
 2026 មករា 23 | 02:50:06 ល្ងាច | CGSM | Status: 🔺ឡើង | Price: 2,510 | Change: 10 | ChangePercent: 0.40
 2026 មករា 23 | 02:50:07 ល្ងាច | PCG | Status: 🔺ឡើង | Price: 4,820 | Change: 20 | ChangePercent: 0.42
+2026 មករា 26 | 08:11:50 ព្រឹក | GTI | Status: 🔺ឡើង | Price: 8,360 | Change: 160 | ChangePercent: 1.95
+2026 មករា 26 | 08:11:51 ព្រឹក | MJQE | Status: 🔻ចុះ | Price: 2,040 | Change: 10 | ChangePercent: 0.49
+2026 មករា 26 | 08:11:52 ព្រឹក | DBDE | Status: 🔻ចុះ | Price: 2,170 | Change: 20 | ChangePercent: 0.91
+2026 មករា 26 | 08:11:54 ព្រឹក | JSL | Status: ▫️ស្មើរ | Price: 2,480 | Change: 0 | ChangePercent: 0.00
