@@ -9,7 +9,7 @@ from price_management import update_if_changed
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
-ALLOWED_ISSUE = ['ABC','PWSA']
+ALLOWED_ISSUE = ['ABC','PWSA','GTI','CGSM']
 
 def is_work_period(dt):
     if dt.weekday() > 4: return False
@@ -56,8 +56,8 @@ def main():
         ))
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
-            # if issueName not in ALLOWED_ISSUE:
-            #     continue
+            if issueName not in ALLOWED_ISSUE:
+                continue
             currentPrice = mainBoardStockTrade['currentPrice']
             change = mainBoardStockTrade['change']
             changeUpDown = mainBoardStockTrade['changeUpDown']
