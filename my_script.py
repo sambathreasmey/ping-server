@@ -54,6 +54,7 @@ def main():
             data.get('mainBoardStockTrades', []),
             data.get('growthBoardStockTrades', [])
         ))
+        callbackData = []
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
@@ -96,10 +97,19 @@ def main():
                         f"Change: {change} | "
                         f"ChangePercent: {percentChange}\n"
                     )
+
+                callbackData.append({
+                    "issueName": issueName,
+                    "currentPrice": currentPrice
+                })
             else:
                 print(f"🍒 {issueName} No change")
 
-        
+        if "GITHUB_OUTPUT" in os.environ:
+            with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+                # We use json.dumps to turn the list into a string
+                json_string = json.dumps(callbackData)
+                f.write(f"stock_data={json_string}\n")
         # price_data = data['data']['todayPrice']
         
         # new_price = str(price_data['currentPrice'])
