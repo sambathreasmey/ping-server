@@ -241,3 +241,4 @@
 2026 មករា 26 | 02:00:18 ល្ងាច | GTI | Status: ▫️ស្មើរ | Price: 8,360 | Change: 0 | ChangePercent: 0.00
 2026 មករា 26 | 02:09:25 ល្ងាច | GTI | Status: 🔻ចុះ | Price: 8,340 | Change: 20 | ChangePercent: 0.24
 2026 មករា 26 | 02:14:24 ល្ងាច | GTI | Status: 🔺ឡើង | Price: 8,380 | Change: 20 | ChangePercent: 0.24
+2026 មករា 26 | 02:15:04 ល្ងាច | GTI | Status: 🔺ឡើង | Price: 8,400 | Change: 40 | ChangePercent: 0.48
