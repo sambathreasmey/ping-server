@@ -55,7 +55,7 @@ def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
     
-    if is_work_period(today):
+    if not is_work_period(today):
         print("💤 Market is closed.")
         time.sleep(300)
         callback()
