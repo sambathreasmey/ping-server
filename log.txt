@@ -338,3 +338,7 @@
 2026 មករា 27 | 02:46:21 ល្ងាច | ABC | Status: ▫️ស្មើរ | Price: 7,180 | Change: 0 | ChangePercent: 0.00
 2026 មករា 27 | 07:20:20 ល្ងាច | ABC | Status: 🔻ចុះ | Price: 7,160 | Change: 20 | ChangePercent: 0.28
 2026 មករា 27 | 07:20:21 ល្ងាច | CGSM | Status: ▫️ស្មើរ | Price: 2,510 | Change: 0 | ChangePercent: 0.00
+2026 មករា 27 | 08:12:03 ល្ងាច | PWSA | Status: ▫️ស្មើរ | Price: 6,420 | Change: 0 | ChangePercent: 0.00
+2026 មករា 27 | 08:12:04 ល្ងាច | GTI | Status: ▫️ស្មើរ | Price: 8,400 | Change: 0 | ChangePercent: 0.00
+2026 មករា 27 | 08:12:06 ល្ងាច | ABC | Status: 🔻ចុះ | Price: 7,160 | Change: 20 | ChangePercent: 0.28
+2026 មករា 27 | 08:12:07 ល្ងាច | CGSM | Status: ▫️ស្មើរ | Price: 2,510 | Change: 0 | ChangePercent: 0.00
