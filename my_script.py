@@ -4,7 +4,7 @@ import os
 import datetime
 import zoneinfo
 from generate import create_card
-from price_management import update_if_changed
+from price_management import has_market_changed
 import json
 import time
 
@@ -71,7 +71,6 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
-        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
@@ -80,7 +79,7 @@ def main():
             change = mainBoardStockTrade['change']
             changeUpDown = mainBoardStockTrade['changeUpDown']
             percentChange = mainBoardStockTrade['percentChange']
-            if update_if_changed(issueName, currentPrice):
+            if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change)
                 up_down_equal = ""
