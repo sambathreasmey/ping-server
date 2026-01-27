@@ -262,3 +262,4 @@
 2026 មករា 27 | 09:09:23 ព្រឹក | PWSA | Status: 🔻ចុះ | Price: 6,380 | Change: 40 | ChangePercent: 0.62
 2026 មករា 27 | 09:09:57 ព្រឹក | PWSA | Status: ▫️ស្មើរ | Price: 6,420 | Change: 0 | ChangePercent: 0.00
 2026 មករា 27 | 09:16:13 ព្រឹក | GTI | Status: 🔺ឡើង | Price: 8,440 | Change: 40 | ChangePercent: 0.48
+2026 មករា 27 | 09:18:37 ព្រឹក | PWSA | Status: 🔻ចុះ | Price: 6,400 | Change: 20 | ChangePercent: 0.31
