@@ -31,7 +31,7 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           SEND_CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
-          LATEST_MARKET: ${{ github.event.client_payload.latest_market }}
+          LATEST_MARKET: ${{ github.event.client_payload.latest_market && github.event.client_payload.latest_market != '[]' && github.event.client_payload.latest_market || '' }}
         run: python my_script.py
 
       - name: Save State
