@@ -11,6 +11,7 @@ import time
 # --- CONFIG ---
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
+LATEST_MARKET = os.getenv("LATEST_MARKET")
 ALLOWED_ISSUE = ['ABC','PWSA','GTI','CGSM']
 
 def is_work_period(dt):
@@ -70,6 +71,7 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
+        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
