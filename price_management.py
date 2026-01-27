@@ -1,38 +1,38 @@
 def has_market_changed(latest_market, issue_name, current_price):
-    # Convert inputs to strings and clean them
-    issue_name = str(issue_name).strip()
-    current_price = str(current_price).strip()
-
     try:
         if not latest_market:
+            print("⚠️ latest_market is empty.")
             return False
 
-        # Build lookup map: { 'ABC': '1245' }
+        # Build the lookup map
         db_prices = {}
         for item in latest_market:
-            # We must use the exact keys from your JSON: 'issue_name' and 'current_price'
-            if isinstance(item, dict):
-                db_prices[str(item.get('issue_name'))] = str(item.get('current_price'))
-            elif hasattr(item, 'keys'): # For sqlite3.Row
-                db_prices[str(item['issue_name'])] = str(item['current_price'])
+            # We must use EXACT keys from your JSON: "issue_name" and "current_price"
+            # We use str() to ensure "1245" matches "1245"
+            name = str(item.get("issue_name"))
+            price = str(item.get("current_price"))
+            db_prices[name] = price
 
-        # DEBUG: See what we are actually comparing
-        print(f"Checking for: {issue_name} (New: {current_price})")
-        print(f"Database contains: {db_prices}")
+        # Clean strings (remove commas and whitespace)
+        search_name = str(issue_name).strip()
+        new_price_str = str(current_price).replace(",", "").strip()
 
-        if issue_name in db_prices:
-            # Normalize strings by removing commas for a true value comparison
-            old_val = db_prices[issue_name].replace(",", "")
-            new_val = current_price.replace(",", "")
+        print(f"DEBUG: Checking {search_name}. New Price: {new_price_str}")
+        print(f"DEBUG: DB Map: {db_prices}")
+
+        if search_name in db_prices:
+            old_price_str = db_prices[search_name].replace(",", "").strip()
             
-            if old_val != new_val:
-                print(f"🔄 Change Detected: {old_val} != {new_val}")
+            if old_price_str != new_price_str:
+                print(f"✅ CHANGE DETECTED for {search_name}: {old_price_str} -> {new_price_str}")
                 return True
+            else:
+                print(f"😴 No change for {search_name}.")
         else:
-            print(f"ℹ️ {issue_name} not found in latest_market, skipping comparison.")
+            print(f"❓ {search_name} not found in DB map keys: {list(db_prices.keys())}")
         
         return False
 
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error in has_market_changed: {e}")
         return False
