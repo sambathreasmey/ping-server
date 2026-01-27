@@ -41,7 +41,7 @@ def get_khmer_now():
     return f"{year} {month} {day} | {time_str} {period}"
 
 def callback(data=None):
-    time.sleep(10)
+    # time.sleep(10)
     if data is None:
         data = []
     if "GITHUB_OUTPUT" in os.environ:
@@ -56,6 +56,7 @@ def main():
     today = datetime.datetime.now(tz)
     
     if not is_work_period(today):
+        print(LATEST_MARKET)
         print("💤 Market is closed.")
         # time.sleep(300)
         callback()
@@ -71,7 +72,6 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
-        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
