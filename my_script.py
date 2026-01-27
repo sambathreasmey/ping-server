@@ -120,7 +120,7 @@ def main():
                     "currentPrice": currentPrice,
                     "status": up_down_equal,
                     "change": change,
-                    "percentChange": percentChange
+                    "changePercent": percentChange
                 })
             else:
                 print(f"🍒 {issueName} No change")
