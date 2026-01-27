@@ -284,3 +284,4 @@
 2026 មករា 27 | 10:07:47 ព្រឹក | ABC | Status: 🔻ចុះ | Price: 7,160 | Change: 20 | ChangePercent: 0.28
 2026 មករា 27 | 10:08:20 ព្រឹក | ABC | Status: ▫️ស្មើរ | Price: 7,180 | Change: 0 | ChangePercent: 0.00
 2026 មករា 27 | 10:09:50 ព្រឹក | CGSM | Status: ▫️ស្មើរ | Price: 2,510 | Change: 0 | ChangePercent: 0.00
+2026 មករា 27 | 10:11:53 ព្រឹក | CGSM | Status: 🔺ឡើង | Price: 2,520 | Change: 10 | ChangePercent: 0.40
