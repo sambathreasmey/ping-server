@@ -55,8 +55,7 @@ def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
     
-    if not is_work_period(today):
-        print(LATEST_MARKET)
+    if is_work_period(today):
         print("💤 Market is closed.")
         # time.sleep(300)
         callback()
@@ -72,6 +71,7 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
+        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
