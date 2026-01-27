@@ -2,6 +2,8 @@ def has_market_changed(latest_market, issue_name, current_price):
     """
     Returns True if the price has changed for an existing issue.
     """
+    print("issue_name " + issue_name)
+    print("current_price " + current_price)
     try:
         if not latest_market:
             return False
