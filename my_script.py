@@ -117,7 +117,10 @@ def main():
 
                 callbackData.append({
                     "issueName": issueName,
-                    "currentPrice": currentPrice
+                    "currentPrice": currentPrice,
+                    "status": up_down_equal,
+                    "change": change,
+                    "percentChange": percentChange
                 })
             else:
                 print(f"🍒 {issueName} No change")
