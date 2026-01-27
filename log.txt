@@ -294,3 +294,4 @@
 2026 មករា 27 | 10:48:30 ព្រឹក | ABC | Status: 🔻ចុះ | Price: 7,160 | Change: 20 | ChangePercent: 0.28
 2026 មករា 27 | 10:51:04 ព្រឹក | ABC | Status: ▫️ស្មើរ | Price: 7,180 | Change: 0 | ChangePercent: 0.00
 2026 មករា 27 | 11:02:39 ព្រឹក | CGSM | Status: 🔺ឡើង | Price: 2,520 | Change: 10 | ChangePercent: 0.40
+2026 មករា 27 | 11:06:15 ព្រឹក | GTI | Status: 🔻ចុះ | Price: 8,380 | Change: 20 | ChangePercent: 0.24
