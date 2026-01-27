@@ -71,6 +71,7 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
+        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
