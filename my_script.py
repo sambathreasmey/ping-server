@@ -41,7 +41,7 @@ def get_khmer_now():
     return f"{year} {month} {day} | {time_str} {period}"
 
 def callback(data=None):
-    # time.sleep(10)
+    time.sleep(10)
     if data is None:
         data = []
     if "GITHUB_OUTPUT" in os.environ:
@@ -57,7 +57,7 @@ def main():
     
     if is_work_period(today):
         print("💤 Market is closed.")
-        # time.sleep(300)
+        time.sleep(300)
         callback()
         return
 
@@ -104,16 +104,6 @@ def main():
                     if os.path.exists(img_path):
                         os.remove(img_path)
                         print(f"🗑️ Deleted local file: {img_path}")
-                
-                with open("log.txt", "a", encoding="utf-8", errors="replace") as f:
-                    f.write(
-                        f"{get_khmer_now()} | "
-                        f"{issueName} | "
-                        f"Status: {up_down_equal} | "
-                        f"Price: {currentPrice} | "
-                        f"Change: {change} | "
-                        f"ChangePercent: {percentChange}\n"
-                    )
 
                 callbackData.append({
                     "issueName": issueName,
