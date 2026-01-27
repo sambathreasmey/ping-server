@@ -1,34 +1,19 @@
-import json
+def has_market_changed(latest_market, new_market):
+    """
+    Returns True if any price in new_market differs from latest_market.
+    Returns False if all prices match or items are new.
+    """
+    # Create a lookup map of {name: price} from the database records
+    db_prices = {item['issue_name']: item['current_price'] for item in latest_market}
 
-STATE_FILE = "state.json"
-
-def load_state():
-    try:
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-def save_state(state):
-    with open(STATE_FILE, "w") as f:
-        json.dump(state, f)
-
-def find_price(key):
-    state = load_state()
-    return state.get(key)
-
-def update_price(key, price):
-    state = load_state()
-    state[key] = price  # update OR add
-    save_state(state)
-
-def update_if_changed(key, new_price):
-    state = load_state()
-    old_price = state.get(key)
-
-    if old_price != new_price:
-        state[key] = new_price
-        save_state(state)
-        return True  # changed
-
-    return False  # no change
+    # Check if any item's price is different from what we have in the DB
+    for item in new_market:
+        name = item.get("issueName")
+        new_price = item.get("currentPrice")
+        
+        # We only care about changes to EXISTING items
+        if name in db_prices:
+            if db_prices[name] != new_price:
+                return True 
+                
+    return False# no change
