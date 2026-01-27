@@ -56,8 +56,27 @@ def main():
     today = datetime.datetime.now(tz)
     
     if not is_work_period(today):
-        print("💤 Market is closed.")
-        time.sleep(300)
+        current_hour = today.hour
+        
+        # Scenario A: It's 7:00 AM - 7:59 AM (Market opens soon!)
+        if current_hour == 7:
+            # Calculate seconds remaining until 8:00 AM
+            seconds_until_eight = ((59 - today.minute) * 60) + (60 - today.second)
+            # Add a small 10-second buffer to ensure we land inside 08:00:xx
+            sleep_duration = seconds_until_eight + 10
+            print(f"🌅 Market opens soon! Waiting {sleep_duration // 60}m {sleep_duration % 60}s until 08:00...")
+            
+        # Scenario B: It's Night time (After 3 PM or before 7 AM)
+        elif current_hour >= 15 or current_hour < 7:
+            sleep_duration = 3600 # 1 Hour
+            print(f"💤 Night mode ({current_hour}:00). Sleeping for 1 hour...")
+            
+        # Scenario C: It's a Weekend or Holiday during the day
+        else:
+            sleep_duration = 300 # 5 Minutes
+            print("📅 Market closed (Weekend/Holiday). Sleeping 5 minutes...")
+
+        time.sleep(sleep_duration)
         callback()
         return
 
@@ -71,7 +90,6 @@ def main():
             data.get('growthBoardStockTrades', [])
         ))
         callbackData = []
-        print(LATEST_MARKET)
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
