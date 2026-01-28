@@ -41,7 +41,7 @@ def get_khmer_now():
     return f"{year} {month} {day} | {time_str} {period}"
 
 def callback(data=None):
-    time.sleep(10)
+    #time.sleep(10)
     if data is None:
         data = []
     if "GITHUB_OUTPUT" in os.environ:
