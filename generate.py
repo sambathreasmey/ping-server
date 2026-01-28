@@ -54,6 +54,7 @@ def create_card(symbol, status, value, percent, change):
     draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
     draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
     draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
+    draw.text((35 * SCALE, 120 * SCALE), percent, fill=color, font=font_small)
 
     text = chagne_symbol + str(change)
     right_x = 260 * SCALE
