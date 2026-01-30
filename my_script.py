@@ -12,7 +12,7 @@ import time
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 LATEST_MARKET = os.getenv("LATEST_MARKET")
-ALLOWED_ISSUE = ['ABC','PWSA','CGSM','GTI','PAS']
+ALLOWED_ISSUE = ['ABC','PWSA','CGSM','GTI']
 
 def is_work_period(dt):
     if dt.weekday() > 4: return False
