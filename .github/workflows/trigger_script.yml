@@ -47,18 +47,18 @@ jobs:
             "status": "success",
             "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
-     # - name: Send Telegram Message
-        #env:
-         # BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          # Use the chat_id from the trigger payload, or fallback to your secret
-        #  CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
-        #run: |
-          #MESSAGE="📊 *CSX Status: Success*"
+      - name: Send Telegram Message
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+           Use the chat_id from the trigger payload, or fallback to your secret
+          CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
+        run: |
+          MESSAGE="📊 *CSX Status: Success*"
           
-          #curl -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-          #-H "Content-Type: application/json" \
-          #-d "{
-          #  \"chat_id\": \"${CHAT_ID}\",
-          #  \"text\": \"${MESSAGE}\",
-          #  \"parse_mode\": \"Markdown\"
-          #}"
+          curl -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+          -H "Content-Type: application/json" \
+          -d "{
+            \"chat_id\": \"${CHAT_ID}\",
+            \"text\": \"${MESSAGE}\",
+            \"parse_mode\": \"Markdown\"
+          }"
