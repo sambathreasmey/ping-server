@@ -2,11 +2,13 @@ name: CSX Stock Tracker
 
 on:
   repository_dispatch:
-    types: [ping_15s]
+    types: [ping_15s, daily_summary]
   workflow_dispatch:
 
 jobs:
+  # --- JOB 1: Regular 15s Tracking ---
   run-tracker:
+    if: github.event.action == 'ping_15s' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       callback_data: ${{ steps.tracker_step.outputs.callback_data }}
@@ -16,17 +18,16 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v4
+        id: setup-python
         with:
           python-version: '3.10'
-          cache: 'pip' # <--- This automatically caches your requirements
+          cache: 'pip'
 
       - name: Install dependencies
-        # This line says: "Only run this if the cache was NOT found"
         if: steps.setup-python.outputs.cache-hit != 'true'
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Run Script
+      - name: Run Tracker Script
         id: tracker_step
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -34,12 +35,13 @@ jobs:
           LATEST_MARKET: ${{ toJSON(github.event.client_payload.latest_market) }}
         run: python my_script.py
 
+  # --- JOB 2: Callback (Only for ping_15s) ---
   callback:
     runs-on: ubuntu-latest
     needs: run-tracker
+    if: always() && needs.run-tracker.result == 'success'
     steps:
-      - name: Callback
-        # if: steps.tracker_step.outputs.callback_data != '[]' # Only run if stocks were found
+      - name: Post Callback
         run: |
           curl -X POST "${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}" \
           -H "Content-Type: application/json" \
@@ -47,18 +49,15 @@ jobs:
             "status": "success",
             "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
-      # - name: Send Telegram Message
-      #   env:
-      #     BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-      #      Use the chat_id from the trigger payload, or fallback to your secret
-      #     CHAT_ID: ${{ github.event.client_payload.chat_id || secrets.SEND_CHAT_ID }}
-      #   run: |
-      #     MESSAGE="📊 *CSX Status: Success*"
-          
-      #     curl -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
-      #     -H "Content-Type: application/json" \
-      #     -d "{
-      #       \"chat_id\": \"${CHAT_ID}\",
-      #       \"text\": \"${MESSAGE}\",
-      #       \"parse_mode\": \"Markdown\"
-      #     }"
+
+  # --- JOB 3: Different Logic for a Different Type ---
+  summary-report:
+    if: github.event.action == 'daily_summary'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Summary
+        run: |
+          echo "Processing daily summary for ${{ github.event.client_payload.chat_id }}"
+          # python summary_script.py
