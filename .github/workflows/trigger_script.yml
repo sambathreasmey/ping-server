@@ -47,6 +47,7 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
+            "event_type": "csx-tracking",
             "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
 
