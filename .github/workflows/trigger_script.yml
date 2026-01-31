@@ -88,20 +88,6 @@ jobs:
           # python summary_script.py
 
   # --- JOB 2: Callback (Only for ping_15s) ---
-  # summary_callback:
-  #   runs-on: ubuntu-latest
-  #   needs: summary-report
-  #   if: always() && needs.summary-report.result == 'success'
-  #   steps:
-  #     - name: Post Callback
-  #       run: |
-  #         curl -X POST "${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}" \
-  #         -H "Content-Type: application/json" \
-  #         -d '{
-  #           "status": "success",
-  #           "event_type": "daily_summary"
-  #         }'
-
   summary_callback:
     runs-on: ubuntu-latest
     needs: summary-report
