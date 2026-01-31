@@ -50,8 +50,8 @@ jobs:
             "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
           
-          MAX_RETRIES=15
-          RETRY_INTERVAL=5
+          MAX_RETRIES=180 # 30 minute
+          RETRY_INTERVAL=10 # every 10 second
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
@@ -101,8 +101,8 @@ jobs:
             "event_type": "daily_summary"
           }'
           
-          MAX_RETRIES=15
-          RETRY_INTERVAL=5
+          MAX_RETRIES=180 # 30 minute
+          RETRY_INTERVAL=10 # every 10 second
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
