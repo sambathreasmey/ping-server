@@ -41,15 +41,39 @@ jobs:
     needs: run-tracker
     if: always() && needs.run-tracker.result == 'success'
     steps:
-      - name: Post Callback
+      - name: Post Callback with Retry
         run: |
-          curl -X POST "${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}" \
-          -H "Content-Type: application/json" \
-          -d '{
+          URL="${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}"
+          PAYLOAD='{
             "status": "success",
             "event_type": "csx-tracking",
             "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
           }'
+          
+          MAX_RETRIES=15
+          RETRY_INTERVAL=5
+          ATTEMPT=1
+
+          while [ $ATTEMPT -le $MAX_RETRIES ]; do
+            echo "Attempt $ATTEMPT of $MAX_RETRIES..."
+            
+            # Execute curl and capture HTTP status code
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+
+            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
+              echo "Callback successful (HTTP $RESPONSE)!"
+              exit 0
+            else
+              echo "Callback failed with status $RESPONSE. Retrying in ${RETRY_INTERVAL}s..."
+              sleep $RETRY_INTERVAL
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+          done
+
+          echo "Error: Max retries reached. Callback failed."
+          exit 1
 
   # --- JOB 3: Different Logic for a Different Type ---
   summary-report:
@@ -64,16 +88,54 @@ jobs:
           # python summary_script.py
 
   # --- JOB 2: Callback (Only for ping_15s) ---
+  # summary_callback:
+  #   runs-on: ubuntu-latest
+  #   needs: summary-report
+  #   if: always() && needs.summary-report.result == 'success'
+  #   steps:
+  #     - name: Post Callback
+  #       run: |
+  #         curl -X POST "${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}" \
+  #         -H "Content-Type: application/json" \
+  #         -d '{
+  #           "status": "success",
+  #           "event_type": "daily_summary"
+  #         }'
+
   summary_callback:
     runs-on: ubuntu-latest
     needs: summary-report
     if: always() && needs.summary-report.result == 'success'
     steps:
-      - name: Post Callback
+      - name: Post Callback with Retry
         run: |
-          curl -X POST "${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}" \
-          -H "Content-Type: application/json" \
-          -d '{
+          URL="${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}"
+          PAYLOAD='{
             "status": "success",
             "event_type": "daily_summary"
           }'
+          
+          MAX_RETRIES=15
+          RETRY_INTERVAL=5
+          ATTEMPT=1
+
+          while [ $ATTEMPT -le $MAX_RETRIES ]; do
+            echo "Attempt $ATTEMPT of $MAX_RETRIES..."
+            
+            # Execute curl and capture HTTP status code
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD")
+
+            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
+              echo "Callback successful (HTTP $RESPONSE)!"
+              exit 0
+            else
+              echo "Callback failed with status $RESPONSE. Retrying in ${RETRY_INTERVAL}s..."
+              sleep $RETRY_INTERVAL
+              ATTEMPT=$((ATTEMPT + 1))
+            fi
+          done
+
+          echo "Error: Max retries reached. Callback failed."
+          exit 1
