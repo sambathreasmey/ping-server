@@ -2,13 +2,13 @@ name: CSX Stock Tracker
 
 on:
   repository_dispatch:
-    types: [ping_15s, daily_summary]
+    types: [csx-tracking, daily_summary]
   workflow_dispatch:
 
 jobs:
   # --- JOB 1: Regular 15s Tracking ---
   run-tracker:
-    if: github.event.action == 'ping_15s' || github.event_name == 'workflow_dispatch'
+    if: github.event.action == 'csx-tracking' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     outputs:
       callback_data: ${{ steps.tracker_step.outputs.callback_data }}
@@ -75,5 +75,5 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{
             "status": "success",
-            "event_type": "summary_callback"
+            "event_type": "daily_summary"
           }'
