@@ -124,11 +124,12 @@ def main():
                         print(f"🗑️ Deleted local file: {img_path}")
 
                 callbackData.append({
-                    "issueName": issueName,
-                    "currentPrice": currentPrice,
+                    "issue_name": issueName,
+                    "current_price": currentPrice,
                     "status": up_down_equal,
+                    "status_key": changeUpDown,
                     "change": change,
-                    "changePercent": percentChange
+                    "change_percent": percentChange
                 })
             else:
                 print(f"🍒 {issueName} No change")
