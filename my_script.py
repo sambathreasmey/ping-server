@@ -105,11 +105,17 @@ def main():
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
                 # Find the item where 'issue_name' matches issueName
-                target_issue = next((item for item in ISSUE_SUMMARIES if item.get('issue_name') == issueName), None)
+                target_issue = next(
+                    (item for item in ISSUE_SUMMARIES 
+                    if isinstance(item, dict) and item.get('issue_name') == issueName), 
+                    None
+                )
+
                 issueSummary = ""
                 if target_issue:
-                    title = target_issue.get('title')
-                    print(f"Found: {issueName} at {title}")
+                    # Safely get the title, defaulting to empty string if missing
+                    title = target_issue.get('title', "")
+                    print(f"Found: {issueName} - {title}")
                     issueSummary = title
                 else:
                     print(f"Issue {issueName} not found in the list.")
