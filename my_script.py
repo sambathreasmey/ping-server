@@ -104,27 +104,35 @@ def main():
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
-                # Find the item where 'issue_name' matches issueName
-                # 1. Clean the input variable
+                # 1. Normalize the search term
                 search_name = str(issueName).strip().upper()
 
-                # 2. Find the item safely
                 target_issue = None
-                for item in ISSUE_SUMMARIES:
-                    # Check if item is actually a dictionary before calling .get()
-                    if isinstance(item, dict):
-                        list_name = str(item.get('issue_name', '')).strip().upper()
-                        if list_name == search_name:
-                            target_issue = item
-                            break
 
-                # 3. Handle the result
-                issueSummary = ""
+                # 2. Loop safely
+                for item in ISSUE_SUMMARIES:
+                    # Skip if it's not a dictionary (prevents the 'str' error)
+                    if not isinstance(item, dict):
+                        continue
+                    
+                    # Extract, clean, and normalize the name from the list
+                    list_name = str(item.get('issue_name', '')).strip().upper()
+                    
+                    if list_name == search_name:
+                        target_issue = item
+                        break
+
+                # 3. Final Output
                 if target_issue:
                     issueSummary = target_issue.get('title', "")
                     print(f"✅ Found: {issueName} - {issueSummary}")
                 else:
-                    print(f"❌ Issue '{issueName}' not found. List contains: {ISSUE_SUMMARIES}")
+                    # This will show you exactly what characters are 'hiding' in your strings
+                    print(f"❌ Still not found. Debugging values:")
+                    print(f"Search Name: '{search_name}' (Length: {len(search_name)})")
+                    if ISSUE_SUMMARIES and isinstance(ISSUE_SUMMARIES[0], dict):
+                        actual_in_list = str(ISSUE_SUMMARIES[0].get('issue_name')).strip().upper()
+                        print(f"List Name:   '{actual_in_list}' (Length: {len(actual_in_list)})")
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
