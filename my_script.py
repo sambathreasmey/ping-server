@@ -107,18 +107,21 @@ def main():
                 # Find the item where 'issue_name' matches issueName
                 target_issue = next(
                     (item for item in ISSUE_SUMMARIES 
-                    if isinstance(item, dict) and item.get('issue_name') == issueName), 
+                    if isinstance(item, dict) and 
+                    str(item.get('issue_name')).strip().upper() == str(issueName).strip().upper()), 
                     None
                 )
 
                 issueSummary = ""
                 if target_issue:
-                    # Safely get the title, defaulting to empty string if missing
                     title = target_issue.get('title', "")
                     print(f"Found: {issueName} - {title}")
                     issueSummary = title
                 else:
-                    print(f"Issue {issueName} not found in the list.")
+                    # Diagnostic print to see exactly what is being compared
+                    print(f"Issue '{issueName}' not found in the list.")
+                    if ISSUE_SUMMARIES:
+                        print(f"First item in list is actually: '{ISSUE_SUMMARIES[0].get('issue_name')}'")
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
