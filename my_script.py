@@ -55,6 +55,16 @@ def callback(data=None):
             print(json_string)
             f.write(f"callback_data={json_string}\n")
 
+def get_summary_text(summaries, name):
+    # Convert if stringified
+    data = json.loads(summaries) if isinstance(summaries, str) else summaries
+    
+    if not data: return ""
+    
+    # Search logic
+    match = next((i for i in data if str(i.get('issue_name')).strip().upper() == str(name).strip().upper()), None)
+    return match.get('title', "") if match else ""
+
 def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
@@ -105,28 +115,7 @@ def main():
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
-                # Ensure ISSUE_SUMMARIES is a list/dict, not a raw string
-                if isinstance(ISSUE_SUMMARIES, str):
-                    try:
-                        ISSUE_SUMMARIES = json.loads(ISSUE_SUMMARIES)
-                    except json.JSONDecodeError:
-                        print("❌ Error: ISSUE_SUMMARIES is a string but not valid JSON")
-                        ISSUE_SUMMARIES = []
-
-                # Now that it's a list of dictionaries, the .get() method will work perfectly
-                search_name = str(issueName).strip().upper()
-                target_issue = next(
-                    (item for item in ISSUE_SUMMARIES 
-                    if isinstance(item, dict) and str(item.get('issue_name')).strip().upper() == search_name), 
-                    None
-                )
-
-                issueSummary = ""
-                if target_issue:
-                    issueSummary = target_issue.get('title', "")
-                    print(f"✅ Found: {issueName} - {issueSummary}")
-                else:
-                    print(f"Issue {issueName} not found in the list.")
+                issueSummary = get_summary_text(ISSUE_SUMMARIES, issueName)
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
