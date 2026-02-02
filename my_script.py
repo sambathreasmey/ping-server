@@ -55,11 +55,6 @@ def callback(data=None):
             print(json_string)
             f.write(f"callback_data={json_string}\n")
 
-def clean_string(s):
-    if not s: return ""
-    # Remove all non-alphanumeric characters (keep only letters and numbers)
-    return re.sub(r'[^a-zA-Z0-9]', '', str(s)).upper()
-
 def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
@@ -110,28 +105,28 @@ def main():
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
-                search_name_clean = clean_string(issueName)
-                target_issue = None
+                # Ensure ISSUE_SUMMARIES is a list/dict, not a raw string
+                if isinstance(ISSUE_SUMMARIES, str):
+                    try:
+                        ISSUE_SUMMARIES = json.loads(ISSUE_SUMMARIES)
+                    except json.JSONDecodeError:
+                        print("❌ Error: ISSUE_SUMMARIES is a string but not valid JSON")
+                        ISSUE_SUMMARIES = []
 
-                for item in ISSUE_SUMMARIES:
-                    if isinstance(item, dict):
-                        # Clean the name from the list
-                        list_name_clean = clean_string(item.get('issue_name', ''))
-                        
-                        # Check for exact match OR if one is inside the other
-                        if list_name_clean == search_name_clean or search_name_clean in list_name_clean:
-                            target_issue = item
-                            break
+                # Now that it's a list of dictionaries, the .get() method will work perfectly
+                search_name = str(issueName).strip().upper()
+                target_issue = next(
+                    (item for item in ISSUE_SUMMARIES 
+                    if isinstance(item, dict) and str(item.get('issue_name')).strip().upper() == search_name), 
+                    None
+                )
 
+                issueSummary = ""
                 if target_issue:
                     issueSummary = target_issue.get('title', "")
-                    print(f"✅ Match Found using Fuzzy Logic: {issueName} -> {issueSummary}")
+                    print(f"✅ Found: {issueName} - {issueSummary}")
                 else:
-                    # Final diagnostic - let's see the hex codes if this fails
-                    print(f"❌ Critical Failure. Hex codes for search: {issueName.encode('utf-8')}")
-                    if ISSUE_SUMMARIES:
-                        name_in_list = str(ISSUE_SUMMARIES[0].get('issue_name'))
-                        print(f"Hex codes for list item: {name_in_list.encode('utf-8')}")
+                    print(f"Issue {issueName} not found in the list.")
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
