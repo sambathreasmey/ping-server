@@ -126,8 +126,7 @@ def main():
                 callbackData.append({
                     "issue_name": issueName,
                     "current_price": currentPrice,
-                    "status": up_down_equal,
-                    "status_key": changeUpDown,
+                    "status": changeUpDown,
                     "change": change,
                     "change_percent": percentChange
                 })
