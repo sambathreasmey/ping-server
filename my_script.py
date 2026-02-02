@@ -105,23 +105,26 @@ def main():
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
                 # Find the item where 'issue_name' matches issueName
-                target_issue = next(
-                    (item for item in ISSUE_SUMMARIES 
-                    if isinstance(item, dict) and 
-                    str(item.get('issue_name')).strip().upper() == str(issueName).strip().upper()), 
-                    None
-                )
+                # 1. Clean the input variable
+                search_name = str(issueName).strip().upper()
 
+                # 2. Find the item safely
+                target_issue = None
+                for item in ISSUE_SUMMARIES:
+                    # Check if item is actually a dictionary before calling .get()
+                    if isinstance(item, dict):
+                        list_name = str(item.get('issue_name', '')).strip().upper()
+                        if list_name == search_name:
+                            target_issue = item
+                            break
+
+                # 3. Handle the result
                 issueSummary = ""
                 if target_issue:
-                    title = target_issue.get('title', "")
-                    print(f"Found: {issueName} - {title}")
-                    issueSummary = title
+                    issueSummary = target_issue.get('title', "")
+                    print(f"✅ Found: {issueName} - {issueSummary}")
                 else:
-                    # Diagnostic print to see exactly what is being compared
-                    print(f"Issue '{issueName}' not found in the list.")
-                    if ISSUE_SUMMARIES:
-                        print(f"First item in list is actually: '{ISSUE_SUMMARIES[0].get('issue_name')}'")
+                    print(f"❌ Issue '{issueName}' not found. List contains: {ISSUE_SUMMARIES}")
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
