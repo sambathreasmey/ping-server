@@ -55,7 +55,7 @@ def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
     
-    if not is_work_period(today):
+    if is_work_period(today):
         current_hour = today.hour
         
         # Scenario A: It's 7:00 AM - 7:59 AM (Market opens soon!)
