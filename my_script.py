@@ -1,4 +1,5 @@
 from itertools import chain
+import re
 # from dotenv import load_dotenv
 import requests
 import os
@@ -54,6 +55,11 @@ def callback(data=None):
             print(json_string)
             f.write(f"callback_data={json_string}\n")
 
+def clean_string(s):
+    if not s: return ""
+    # Remove all non-alphanumeric characters (keep only letters and numbers)
+    return re.sub(r'[^a-zA-Z0-9]', '', str(s)).upper()
+
 def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
@@ -104,35 +110,28 @@ def main():
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
-                # 1. Normalize the search term
-                search_name = str(issueName).strip().upper()
-
+                search_name_clean = clean_string(issueName)
                 target_issue = None
 
-                # 2. Loop safely
                 for item in ISSUE_SUMMARIES:
-                    # Skip if it's not a dictionary (prevents the 'str' error)
-                    if not isinstance(item, dict):
-                        continue
-                    
-                    # Extract, clean, and normalize the name from the list
-                    list_name = str(item.get('issue_name', '')).strip().upper()
-                    
-                    if list_name == search_name:
-                        target_issue = item
-                        break
+                    if isinstance(item, dict):
+                        # Clean the name from the list
+                        list_name_clean = clean_string(item.get('issue_name', ''))
+                        
+                        # Check for exact match OR if one is inside the other
+                        if list_name_clean == search_name_clean or search_name_clean in list_name_clean:
+                            target_issue = item
+                            break
 
-                # 3. Final Output
                 if target_issue:
                     issueSummary = target_issue.get('title', "")
-                    print(f"✅ Found: {issueName} - {issueSummary}")
+                    print(f"✅ Match Found using Fuzzy Logic: {issueName} -> {issueSummary}")
                 else:
-                    # This will show you exactly what characters are 'hiding' in your strings
-                    print(f"❌ Still not found. Debugging values:")
-                    print(f"Search Name: '{search_name}' (Length: {len(search_name)})")
-                    if ISSUE_SUMMARIES and isinstance(ISSUE_SUMMARIES[0], dict):
-                        actual_in_list = str(ISSUE_SUMMARIES[0].get('issue_name')).strip().upper()
-                        print(f"List Name:   '{actual_in_list}' (Length: {len(actual_in_list)})")
+                    # Final diagnostic - let's see the hex codes if this fails
+                    print(f"❌ Critical Failure. Hex codes for search: {issueName.encode('utf-8')}")
+                    if ISSUE_SUMMARIES:
+                        name_in_list = str(ISSUE_SUMMARIES[0].get('issue_name'))
+                        print(f"Hex codes for list item: {name_in_list.encode('utf-8')}")
                     
                 img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
