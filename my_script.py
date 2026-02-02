@@ -1,4 +1,5 @@
 from itertools import chain
+from dotenv import load_dotenv
 import requests
 import os
 import datetime
@@ -9,6 +10,7 @@ import json
 import time
 
 # --- CONFIG ---
+load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 LATEST_MARKET = os.getenv("LATEST_MARKET")
@@ -55,7 +57,7 @@ def main():
     tz = zoneinfo.ZoneInfo("Asia/Phnom_Penh")
     today = datetime.datetime.now(tz)
     
-    if not is_work_period(today):
+    if is_work_period(today):
         current_hour = today.hour
         
         # Scenario A: It's 7:00 AM - 7:59 AM (Market opens soon!)
