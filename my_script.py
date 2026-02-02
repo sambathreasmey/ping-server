@@ -1,5 +1,5 @@
 from itertools import chain
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import requests
 import os
 import datetime
@@ -10,10 +10,11 @@ import json
 import time
 
 # --- CONFIG ---
-load_dotenv()
+# load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 LATEST_MARKET = os.getenv("LATEST_MARKET")
+ISSUE_SUMMARIES = os.getenv("ISSUE_SUMMARIES")
 ALLOWED_ISSUE = ['ABC','PWSA']
 
 def is_work_period(dt):
@@ -102,7 +103,18 @@ def main():
             percentChange = mainBoardStockTrade['percentChange']
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
-                img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change)
+                
+                # Find the item where 'issue_name' matches issueName
+                target_issue = next((item for item in ISSUE_SUMMARIES if item.get('issue_name') == issueName), None)
+                issueSummary = ""
+                if target_issue:
+                    title = target_issue.get('title')
+                    print(f"Found: {issueName} at {title}")
+                    issueSummary = title
+                else:
+                    print(f"Issue {issueName} not found in the list.")
+                    
+                img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
                 # Send to Telegram
                 if changeUpDown == "up":

@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont
 
-def create_card(symbol, status, value, percent, change):
+def create_card(symbol, status, value, percent, change, issueSummary):
     # Colors for each card type
     colors = {
         "UP":    "#4AFF47",  # green
@@ -51,12 +51,11 @@ def create_card(symbol, status, value, percent, change):
         font_main = ImageFont.load_default()
         font_main = ImageFont.load_default()
 
-    new_feature = "add here"
     # Draw text (scaled positions)
     draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
     draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
     draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
-    draw.text((155 * SCALE, 105 * SCALE), new_feature, fill=colors.get("#FFFFFF"), font=font_smallest)
+    draw.text((155 * SCALE, 105 * SCALE), issueSummary, fill=colors.get("#FFFFFF"), font=font_smallest)
 
     text = chagne_symbol + str(change)
     right_x = 260 * SCALE
