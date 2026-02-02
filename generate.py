@@ -45,7 +45,7 @@ def create_card(symbol, status, value, percent, change, issueSummary):
     try:
         font_main = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 34 * SCALE)
         font_small = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 26 * SCALE)
-        font_smallest = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 6 * SCALE)
+        font_smallest = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 5 * SCALE)
     except Exception as e:
         print("Font loading error:", e)
         font_main = ImageFont.load_default()
@@ -55,7 +55,7 @@ def create_card(symbol, status, value, percent, change, issueSummary):
     draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
     draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
     draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
-    draw.text((155 * SCALE, 105 * SCALE), issueSummary, fill=colors.get("#FFFFFF"), font=font_smallest)
+    draw.text((145 * SCALE, 110 * SCALE), issueSummary, fill=colors.get("#FFFFFF"), font=font_smallest)
 
     text = chagne_symbol + str(change)
     right_x = 260 * SCALE
