@@ -83,7 +83,7 @@ jobs:
       - name: Run Summary
         run: |
           echo "Processing daily summary for ${{ github.event.client_payload.chat_id }}"
-          # python summary_script.py
+          python daily_summary_script.py
 
   # --- JOB 2: Callback (Only for ping_15s) ---
   summary_callback:
