@@ -121,11 +121,11 @@ def main():
                 up_down_equal = ""
                 # Send to Telegram
                 if changeUpDown == "up":
-                    up_down_equal = "🔺ឡើង"
+                    up_down_equal = "🟢ឡើង"
                 elif changeUpDown == "down":
-                    up_down_equal = "🔻ចុះ"
+                    up_down_equal = "🔴ចុះ"
                 else:
-                    up_down_equal = "▫️ស្មើរ"
+                    up_down_equal = "⚫️ស្មើរ"
                 caption = f"<b>{issueName} {currentPrice} រៀល</b> {up_down_equal} {change} | <b>{percentChange}%</b>"
                 try:
                     with open(img_path, "rb") as img:
