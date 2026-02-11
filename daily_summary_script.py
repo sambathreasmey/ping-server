@@ -1,4 +1,8 @@
 import time
+
+# --- CONFIG ---
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+
 def main():
     try:
         push_telegram()
@@ -6,7 +10,6 @@ def main():
         print(f"Error: {e}")
 
 def push_telegram():
-    print("Pushed to telegram bot.")
     time.sleep(20)
 
 if __name__ == "__main__":
