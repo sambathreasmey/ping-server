@@ -1,3 +1,4 @@
+import time
 def main():
     try:
         push_telegram()
@@ -6,6 +7,7 @@ def main():
 
 def push_telegram():
     print("Pushed to telegram bot.")
+    time.sleep(20)
 
 if __name__ == "__main__":
     main()
