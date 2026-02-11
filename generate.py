@@ -75,67 +75,61 @@ def create_card(symbol, status, value, percent, change, issueSummary):
 
     return filename
 
-def create_card_v2(symbol, status, value, percent, change, issueSummary):
+def create_glass_card(symbol, status, value, percent, change, issueSummary):
+    # Setup colors and scales
     colors = {"UP": "#4AFF47", "DOWN": "#FF0000", "EQUAL": "#FFFFFF"}
-    chagne_symbols = {"UP": "+", "DOWN": "-", "EQUAL": ""}
-
     status_upper = status.upper()
     color = colors.get(status_upper, "#000000")
-    chagne_symbol = chagne_symbols.get(status_upper, "")
-
+    
     SCALE = 3
     W, H = 280 * SCALE, 125 * SCALE
     RADIUS = 25 * SCALE 
 
-    # 1. Load the Base Background (Sharp)
+    # 1. Load Sharp Background
     try:
-        bg_path = f"images/background-down-2.jpg" if status_upper == "UP-SKIP" else f"images/background-{status.lower()}.png"
-        base_bg = Image.open(bg_path).convert("RGB").resize((W, H))
+        bg_path = f"images/background-{status.lower()}.png"
+        base_bg = Image.open(bg_path).convert("RGBA").resize((W, H))
     except:
-        base_bg = Image.new("RGB", (W, H), (30, 30, 30))
+        base_bg = Image.new("RGBA", (W, H), (40, 44, 52, 255))
 
-    # 2. Create the Blurred Version
-    # We blur the whole image first so the edges of the card look natural
-    blurred_bg = base_bg.filter(ImageFilter.GaussianBlur(radius=5))
+    # 2. Create Blurred Layer
+    # Blur the background heavily
+    blurred_layer = base_bg.filter(ImageFilter.GaussianBlur(radius=10 * SCALE))
 
-    # 3. Create a Mask for the Rounded Card
-    # This mask defines WHERE the blur will appear
+    # 3. Create Rounded Mask
     mask = Image.new("L", (W, H), 0)
-    draw_mask = ImageDraw.Draw(mask)
-    # Define card margins if you want it smaller than canvas, 
-    # or keep at 0,0,W,H for full-canvas rounded edges
-    draw_mask.rounded_rectangle([0, 0, W, H], radius=RADIUS, fill=255)
+    mask_draw = ImageDraw.Draw(mask)
+    # The card area (e.g., slightly inset from the edges if you want)
+    card_box = [10 * SCALE, 10 * SCALE, W - 10 * SCALE, H - 10 * SCALE]
+    mask_draw.rounded_rectangle(card_box, radius=RADIUS, fill=255)
 
-    # 4. Composite: Sharp Background + Blurred Card Layer
-    # We use the mask to "punch out" the blurred version onto the sharp one
-    final_img = base_bg.copy()
-    final_img.paste(blurred_bg, (0, 0), mask=mask)
+    # 4. Create Glass Tint (Optional but recommended)
+    # Adds a faint white/dark glow so text is readable
+    tint = Image.new("RGBA", (W, H), (255, 255, 255, 30)) # 30 = very transparent
+
+    # 5. Composite Layers
+    # Paste blurred version onto sharp background using the mask
+    base_bg.paste(blurred_layer, (0, 0), mask=mask)
+    # Paste the subtle tint over the blurred area using the same mask
+    base_bg.alpha_composite(tint, (0, 0), (0, 0))
+
+    # 6. Draw Sharp UI Elements
+    draw = ImageDraw.Draw(base_bg)
     
-    draw = ImageDraw.Draw(final_img)
+    # Rounded Accent Bar (Pill shape on the left)
+    draw.rounded_rectangle([10 * SCALE, 10 * SCALE, 22 * SCALE, H - 10 * SCALE], 
+                           radius=RADIUS, fill=color)
 
-    # 5. Draw UI Elements
-    # Accent Bar
-    draw.rounded_rectangle([-16 * SCALE, 0, 10 * SCALE, H], radius=RADIUS, fill=color)
-
+    # Load and Draw Text
     try:
         font_main = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 34 * SCALE)
-        font_small = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 26 * SCALE)
-        font_smallest = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 8 * SCALE)
+        font_small = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 24 * SCALE)
     except:
-        font_main = font_small = font_smallest = ImageFont.load_default()
+        font_main = font_small = ImageFont.load_default()
 
-    # Text Elements
-    draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
-    draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
-    draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
-    draw.text((127 * SCALE, 108 * SCALE), issueSummary, fill="#FFFFFF", font=font_smallest)
+    draw.text((40 * SCALE, 25 * SCALE), symbol, fill=color, font=font_main)
+    draw.text((40 * SCALE, 65 * SCALE), value, fill="#FFFFFF", font=font_main)
 
-    # Right-aligned Change Text
-    text = chagne_symbol + str(change)
-    bbox = draw.textbbox((0, 0), text, font=font_small)
-    x = (260 * SCALE) - (bbox[2] - bbox[0])
-    draw.text((x, 78 * SCALE), text, fill=color, font=font_small)
-
-    filename = "images/output_v2.png"
-    final_img.save(filename)
-    return filename
+    # Save final result
+    base_bg.save("images/output_v2.png")
+    return "images/output_v2.png"
