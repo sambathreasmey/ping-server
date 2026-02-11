@@ -20,7 +20,7 @@ def push_telegram():
     currentPrice = "18,000"
     percentChange = "10.25"
     change = 1000
-    issueSummary = []
+    issueSummary = ""
     
     img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
     up_down_equal = ""
