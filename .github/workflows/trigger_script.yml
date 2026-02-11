@@ -82,6 +82,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Run Summary
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
           echo "Processing daily summary for ${{ github.event.client_payload.chat_id }}"
           python daily_summary_script.py
