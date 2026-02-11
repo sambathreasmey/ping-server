@@ -96,7 +96,7 @@ def create_card_v2(symbol, status, value, percent, change, issueSummary):
 
     # 2. Create the Blurred Version
     # We blur the whole image first so the edges of the card look natural
-    blurred_bg = base_bg.filter(ImageFilter.GaussianBlur(radius=15))
+    blurred_bg = base_bg.filter(ImageFilter.GaussianBlur(radius=5))
 
     # 3. Create a Mask for the Rounded Card
     # This mask defines WHERE the blur will appear
