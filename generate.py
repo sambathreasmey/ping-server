@@ -75,7 +75,7 @@ def create_card(symbol, status, value, percent, change, issueSummary):
 
     return filename
 
-def create_glass_card(symbol, status, value, percent, change, issueSummary):
+def create_card_v2(symbol, status, value, percent, change, issueSummary):
     # Setup colors and scales
     colors = {"UP": "#4AFF47", "DOWN": "#FF0000", "EQUAL": "#FFFFFF"}
     status_upper = status.upper()
