@@ -76,83 +76,66 @@ def create_card(symbol, status, value, percent, change, issueSummary):
     return filename
 
 def create_card_v2(symbol, status, value, percent, change, issueSummary):
-    # Colors for each card type
-    colors = {
-        "UP":    "#4AFF47",  # green
-        "DOWN":  "#FF0000",  # red
-        "EQUAL": "#FFFFFF",  # white/gray
-    }
-
-    change_symbols = {
-        "UP":    "+",
-        "DOWN":  "-",
-        "EQUAL": "",
-    }
+    colors = {"UP": "#4AFF47", "DOWN": "#FF0000", "EQUAL": "#FFFFFF"}
+    chagne_symbols = {"UP": "+", "DOWN": "-", "EQUAL": ""}
 
     status_upper = status.upper()
     color = colors.get(status_upper, "#000000")
-    change_symbol = change_symbols.get(status_upper, "")
+    chagne_symbol = chagne_symbols.get(status_upper, "")
 
-    # 3× scale factor
     SCALE = 3
     W, H = 280 * SCALE, 125 * SCALE
-    RADIUS = 20 * SCALE  # Rounded corner radius for the whole card
+    RADIUS = 25 * SCALE 
 
-    # 1. Load and prepare background image
+    # 1. Load the Base Background (Sharp)
     try:
         bg_path = f"images/background-down-2.jpg" if status_upper == "UP-SKIP" else f"images/background-{status.lower()}.png"
-        bg_img = Image.open(bg_path).convert("RGBA")
+        base_bg = Image.open(bg_path).convert("RGB").resize((W, H))
     except:
-        bg_img = Image.new("RGBA", (W, H), (50, 50, 50, 255)) # Fallback
-    
-    bg_img = bg_img.resize((W, H))
+        base_bg = Image.new("RGB", (W, H), (30, 30, 30))
 
-    # 2. Apply Background Blur
-    # Adjust radius for intensity (e.g., 5 * SCALE)
-    bg_img = bg_img.filter(ImageFilter.GaussianBlur(radius=4 * SCALE))
+    # 2. Create the Blurred Version
+    # We blur the whole image first so the edges of the card look natural
+    blurred_bg = base_bg.filter(ImageFilter.GaussianBlur(radius=15))
 
-    # 3. Create a Rounded Mask for the whole card
-    # This gives the card its rounded corners against the final background
+    # 3. Create a Mask for the Rounded Card
+    # This mask defines WHERE the blur will appear
     mask = Image.new("L", (W, H), 0)
     draw_mask = ImageDraw.Draw(mask)
+    # Define card margins if you want it smaller than canvas, 
+    # or keep at 0,0,W,H for full-canvas rounded edges
     draw_mask.rounded_rectangle([0, 0, W, H], radius=RADIUS, fill=255)
 
-    # 4. Create final image with transparency support
-    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    img.paste(bg_img, (0, 0), mask=mask)
+    # 4. Composite: Sharp Background + Blurred Card Layer
+    # We use the mask to "punch out" the blurred version onto the sharp one
+    final_img = base_bg.copy()
+    final_img.paste(blurred_bg, (0, 0), mask=mask)
+    
+    draw = ImageDraw.Draw(final_img)
 
-    draw = ImageDraw.Draw(img)
+    # 5. Draw UI Elements
+    # Accent Bar
+    draw.rounded_rectangle([-16 * SCALE, 0, 10 * SCALE, H], radius=RADIUS, fill=color)
 
-    # 5. Rounded left border (accent bar)
-    # We draw this on top of the blurred background
-    draw.rounded_rectangle([-16 * SCALE, 0, 12 * SCALE, H], radius=RADIUS, fill=color)
-
-    # Load Fonts
     try:
         font_main = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 34 * SCALE)
         font_small = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 26 * SCALE)
-        font_smallest = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 10 * SCALE)
-    except Exception as e:
+        font_smallest = ImageFont.truetype("fonts/DejaVuSans-Bold.ttf", 8 * SCALE)
+    except:
         font_main = font_small = font_smallest = ImageFont.load_default()
 
-    # Draw text
+    # Text Elements
     draw.text((35 * SCALE, 15 * SCALE), symbol, fill=color, font=font_main)
     draw.text((35 * SCALE, 55 * SCALE), value, fill=color, font=font_main)
     draw.text((35 * SCALE, 90 * SCALE), percent, fill=color, font=font_small)
-    
-    # Corrected white color for summary
     draw.text((127 * SCALE, 108 * SCALE), issueSummary, fill="#FFFFFF", font=font_smallest)
 
-    # Dynamic X-position for change value
-    text = change_symbol + str(change)
+    # Right-aligned Change Text
+    text = chagne_symbol + str(change)
     bbox = draw.textbbox((0, 0), text, font=font_small)
-    text_width = bbox[2] - bbox[0]
-    draw.text(( (260 * SCALE) - text_width, 78 * SCALE), text, fill=color, font=font_small)
+    x = (260 * SCALE) - (bbox[2] - bbox[0])
+    draw.text((x, 78 * SCALE), text, fill=color, font=font_small)
 
-    # Save as PNG to preserve transparency/rounded corners
     filename = "images/output_v2.png"
-    img.save(filename)
-    print(f"✔ Saved {filename}")
-
+    final_img.save(filename)
     return filename
-
