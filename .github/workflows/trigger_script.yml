@@ -84,6 +84,7 @@ jobs:
       - name: Run Summary
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          SEND_CHAT_ID: ${{ secrets.SEND_CHAT_ID }}
         run: |
           echo "Processing daily summary for ${{ github.event.client_payload.chat_id }}"
           python daily_summary_script.py
