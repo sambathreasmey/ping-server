@@ -1,6 +1,5 @@
 from itertools import chain
 import re
-# from dotenv import load_dotenv
 import requests
 import os
 import datetime
@@ -11,7 +10,9 @@ import json
 import time
 
 # --- CONFIG ---
-# load_dotenv()
+if os.getenv("CI") is None:
+    from dotenv import load_dotenv
+    load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SEND_CHAT_ID = os.getenv("SEND_CHAT_ID")
 LATEST_MARKET = os.getenv("LATEST_MARKET")
