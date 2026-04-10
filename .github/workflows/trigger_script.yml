@@ -57,7 +57,13 @@ jobs:
             echo "Attempt $ATTEMPT of $MAX_RETRIES..."
             
             # Execute curl and capture HTTP status code
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL" \
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 5 \
+              --max-time 10 \
+              --retry 3 \
+              --retry-delay 2 \
+              --retry-connrefused \
+              -X POST "$URL" \
               -H "Content-Type: application/json" \
               -d "$PAYLOAD")
 
