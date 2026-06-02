@@ -41,37 +41,50 @@ jobs:
     if: always() && needs.run-tracker.result == 'success'
     steps:
       - name: Post Callback with Retry
+        # Pass GitHub outputs as Env Variables to prevent broken string syntax in bash
+        env:
+          CALLBACK_SECRET: ${{ secrets.CALLBACK_URL }}
+          CALLBACK_DATA: ${{ needs.run-tracker.outputs.callback_data }}
         run: |
-          URL="${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}"
-          PAYLOAD='{
+          # Fallback values
+          URL="${CALLBACK_SECRET:-https://youtube.com/trigger_callback}"
+          DATA_PAYLOAD="${CALLBACK_DATA:-[]}"
+
+          # Construct clean JSON
+          PAYLOAD=$(cat <<EOF
+          {
             "status": "success",
             "event_type": "csx-tracking",
-            "data": ${{ needs.run-tracker.outputs.callback_data || '[]' }}
-          }'
+            "data": $DATA_PAYLOAD
+          }
+          EOF
+          )
+
+          echo "Sending payload..."
           
-          MAX_RETRIES=180 # 30 minute
-          RETRY_INTERVAL=10 # every 10 second
+          MAX_RETRIES=15 # Reduced to prevent massive 30-minute hangs if down
+          RETRY_INTERVAL=10
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
             echo "Attempt $ATTEMPT of $MAX_RETRIES..."
             
-            # Execute curl and capture HTTP status code
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            # Create temporary files to catch output
+            HTTP_STATUS=$(curl -s -w "%{http_code}" -o response.txt \
               --connect-timeout 5 \
               --max-time 10 \
-              --retry 3 \
-              --retry-delay 2 \
-              --retry-connrefused \
               -X POST "$URL" \
               -H "Content-Type: application/json" \
               -d "$PAYLOAD")
 
-            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
-              echo "Callback successful (HTTP $RESPONSE)!"
+            if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+              echo "Callback successful (HTTP $HTTP_STATUS)!"
+              echo "Server Response: $(cat response.txt)"
               exit 0
             else
-              echo "Callback failed with status $RESPONSE. Retrying in ${RETRY_INTERVAL}s..."
+              echo "Callback failed with status $HTTP_STATUS."
+              echo "Server Error Message: $(cat response.txt)"
+              echo "Retrying in ${RETRY_INTERVAL}s..."
               sleep $RETRY_INTERVAL
               ATTEMPT=$((ATTEMPT + 1))
             fi
