@@ -41,12 +41,10 @@ jobs:
     if: always() && needs.run-tracker.result == 'success'
     steps:
       - name: Post Callback with Retry
-        # Pass GitHub outputs as Env Variables to prevent broken string syntax in bash
         env:
           CALLBACK_SECRET: ${{ secrets.CALLBACK_URL }}
           CALLBACK_DATA: ${{ needs.run-tracker.outputs.callback_data }}
         run: |
-          # Fallback values
           URL="${CALLBACK_SECRET:-https://youtube.com/trigger_callback}"
           DATA_PAYLOAD="${CALLBACK_DATA:-[]}"
 
@@ -60,23 +58,33 @@ jobs:
           EOF
           )
 
-          echo "Sending payload..."
-          
-          MAX_RETRIES=15 # Reduced to prevent massive 30-minute hangs if down
+          MAX_RETRIES=15
           RETRY_INTERVAL=10
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
             echo "Attempt $ATTEMPT of $MAX_RETRIES..."
             
-            # Create temporary files to catch output
+            # 1. Increased connect-timeout to 15s and max-time to 30s
+            # 2. Added '|| CURL_EXIT_CODE=$?' to catch exit code 28 gracefully without crashing
+            CURL_EXIT_CODE=0
             HTTP_STATUS=$(curl -s -w "%{http_code}" -o response.txt \
-              --connect-timeout 5 \
-              --max-time 10 \
+              --connect-timeout 15 \
+              --max-time 30 \
               -X POST "$URL" \
               -H "Content-Type: application/json" \
-              -d "$PAYLOAD")
+              -d "$PAYLOAD") || CURL_EXIT_CODE=$?
 
+            # Check if curl itself failed (like timeout 28)
+            if [ $CURL_EXIT_CODE -ne 0 ]; then
+              echo "Curl failed with exit code $CURL_EXIT_CODE (Network timeout/issue)."
+              echo "Retrying in ${RETRY_INTERVAL}s..."
+              sleep $RETRY_INTERVAL
+              ATTEMPT=$((ATTEMPT + 1))
+              continue
+            fi
+
+            # Check HTTP Status if curl succeeded
             if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
               echo "Callback successful (HTTP $HTTP_STATUS)!"
               echo "Server Response: $(cat response.txt)"
