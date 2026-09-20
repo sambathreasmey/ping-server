@@ -3,7 +3,7 @@ import requests
 import os
 import datetime
 import zoneinfo
-from generate import create_card
+from generate import create_card_v2
 from price_management import has_market_changed
 import json
 import time
@@ -117,7 +117,7 @@ def main():
                 
                 issueSummary = get_summary_text(ISSUE_SUMMARIES, issueName)
                     
-                img_path = create_card(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
+                img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
                 # Send to Telegram
                 if changeUpDown == "up":
