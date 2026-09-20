@@ -15,12 +15,12 @@ def main():
         print(f"Error: {e}")
 
 def push_telegram():
-    issueName = "SMEY"
+    issueName = "PPWSA"
     changeUpDown = "up"
-    currentPrice = "18,000"
-    percentChange = "10.25"
-    change = 1000
-    issueSummary = "Upper (6,420) +0.31% | Lower (6,380) -0.31%"
+    currentPrice = "11,020"
+    percentChange = "0.18"
+    change = 20
+    issueSummary = "Upper (11,020) +4.36% | Lower (10,700) -2.73%"
     
     img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
     up_down_equal = ""
@@ -44,7 +44,6 @@ def push_telegram():
         if os.path.exists(img_path):
             os.remove(img_path)
             print(f"🗑️ Deleted local file: {img_path}")
-    time.sleep(20)
 
 if __name__ == "__main__":
     main()
