@@ -119,6 +119,7 @@ def main():
                 # .strip() removes any whitespace/spaces before checking if empty
                 if not issueSummary or not issueSummary.strip():
                     issueSummary = "Upper (-) +0% | Lower (-) -0%"
+                change = int(change)
                     
                 img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
