@@ -3,7 +3,7 @@ import requests
 import os
 import datetime
 import zoneinfo
-from generate import create_card_v2
+from generate import create_card_v2, safe_float
 from price_management import has_market_changed
 import json
 import time
@@ -98,47 +98,55 @@ def main():
     try:
         response = requests.get(url, params={"lang": "en"}, timeout=30)
         jsonRes = response.json()
-        data = jsonRes['data']
+        data = jsonRes.get('data', {})
         mainBoardStockTrades = list(chain(
             data.get('mainBoardStockTrades', []),
             data.get('growthBoardStockTrades', [])
         ))
+        
         callbackData = []
         for mainBoardStockTrade in mainBoardStockTrades:
             issueName = mainBoardStockTrade['issueName'].strip()
             if issueName not in ALLOWED_ISSUE:
                 continue
+                
             currentPrice = mainBoardStockTrade['currentPrice']
             change = mainBoardStockTrade['change']
             changeUpDown = mainBoardStockTrade['changeUpDown']
             percentChange = mainBoardStockTrade['percentChange']
+            
             if has_market_changed(LATEST_MARKET, issueName, currentPrice):
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
                 issueSummary = get_summary_text(ISSUE_SUMMARIES, issueName)
-                # .strip() removes any whitespace/spaces before checking if empty
                 if not issueSummary or not issueSummary.strip():
                     issueSummary = "Upper (-) +0% | Lower (-) -0%"
-                change = float(change)
-                    
-                img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
-                up_down_equal = ""
-                # Send to Telegram
+                
+                # Convert safely to float
+                change = safe_float(change)
+                
+                img_path = create_card_v2(
+                    issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary
+                )
+                
+                # Prepare Telegram Text
                 if changeUpDown == "up":
                     up_down_equal = "🟢ឡើង"
                 elif changeUpDown == "down":
                     up_down_equal = "🔴ចុះ"
                 else:
                     up_down_equal = "⚫️ស្មើរ"
+                    
                 caption = f"<b>{issueName} {currentPrice} រៀល</b> {up_down_equal} {change} | <b>{percentChange}%</b>"
+                
                 try:
                     with open(img_path, "rb") as img:
-                        response = requests.post(
+                        resp = requests.post(
                             f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto", 
                             data={"chat_id": SEND_CHAT_ID, "caption": caption, "parse_mode": "HTML"},
                             files={"photo": img}
                         )
-                        print(f"Telegram response: {response.status_code}")
+                        print(f"Telegram response: {resp.status_code}")
                 finally:
                     if os.path.exists(img_path):
                         os.remove(img_path)
@@ -153,7 +161,9 @@ def main():
                 })
             else:
                 print(f"🍒 {issueName} No change")
+                
         callback(callbackData)
+        
     except Exception as e:
         print(f"Error: {e}")
 
