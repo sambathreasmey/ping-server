@@ -83,12 +83,16 @@ def create_card(symbol, status, value, percent, change, issueSummary):
 
 WHITE = "#FFFFFF"
 MUTED = "#D8DCE3"  # soft off-white for secondary text
-UP_COLOR = "#3DDC55"
-DOWN_COLOR = "#FF4747"
+# UP_COLOR = "#3DDC55"
+UP_COLOR = "#4AFF47"
+# DOWN_COLOR = "#FF4747"
+DOWN_COLOR = "#FF0000"
 
 STATUS_COLORS = {
-    "UP": "#3DDC55",     # green
-    "DOWN": "#FF4747",   # red
+    # "UP": "#3DDC55",     # green
+    "UP": "#4AFF47",     # green
+    # "DOWN": "#FF4747",   # red
+    "DOWN": "#FF0000",   # red
     "EQUAL": "#B7BDC6",  # neutral gray
 }
 
