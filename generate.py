@@ -136,11 +136,23 @@ def _auto_stroke_color(fill_hex):
  
  
 def _auto_stroke_width(font, factor=0.03, min_w=1, max_w=6):
-    """Outline thickness scales with the font's point size, so a 90px hero
-    number gets a visibly thicker (and still proportionate) outline than
-    an 18px label instead of both using the same fixed pixel width."""
     size = getattr(font, "size", 24)
-    return max(min_w, min(max_w, round(size * factor)))
+    return int(max(min_w, min(max_w, round(size * factor))))
+
+def parse_issue_summary(issueSummary):
+    levels = []
+    if not issueSummary:
+        return levels
+    
+    upper = re.search(r"Upper\s*\(([\d,\.]+)\)\s*([+-][\d\.]+%)", issueSummary)
+    if upper:
+        levels.append(("▲", UP_COLOR, upper.group(1), upper.group(2)))
+        
+    lower = re.search(r"Lower\s*\(([\d,\.]+)\)\s*([+-][\d\.]+%)", issueSummary)
+    if lower:
+        levels.append(("▼", DOWN_COLOR, lower.group(1), lower.group(2)))
+        
+    return levels
  
  
 def _auto_gap(font, factor=0.3):
@@ -340,20 +352,17 @@ def create_card_v2(symbol, status, value, percent, change, issueSummary,
     # instead of fighting the rest of the layout for whatever is left over.
     # An "Upper (...) +x% | Lower (...) -x%" summary gets a dedicated
     # two-row layout; anything else falls back to a single muted line.
-    levels_match = _LEVELS_PATTERN.match(issueSummary) if issueSummary else None
-    if levels_match:
-        up_val, up_pct, down_val, down_pct = levels_match.groups()
-        levels = [
-            ("▲", UP_COLOR, up_val, up_pct),
-            ("▼", DOWN_COLOR, down_val, down_pct),
-        ]
+    levels = parse_issue_summary(issueSummary)
+
+    if levels:
         row_h = draw.textbbox((0, 0), "0", font=font_level_num)[3]
         LEVEL_ROW_GAP = _auto_gap(font_level_label, factor=0.45)
-        footer_h = row_h * 2 + LEVEL_ROW_GAP
+        footer_h = row_h * len(levels) + LEVEL_ROW_GAP * (len(levels) - 1)
     elif issueSummary:
         footer_h = line_height(issueSummary, font_summary)
     else:
         footer_h = 0
+
     footer_y = H - MARGIN - footer_h
  
     cursor_y = MARGIN - _auto_gap(font_symbol, factor=0.3)
