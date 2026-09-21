@@ -116,8 +116,9 @@ def main():
                 print(f"✅ {issueName} Price Changed: {currentPrice}")
                 
                 issueSummary = get_summary_text(ISSUE_SUMMARIES, issueName)
-                if issueSummary == "":
-                    issueSummary = "Upper (0) +0% | Lower (0) -0%"
+                # .strip() removes any whitespace/spaces before checking if empty
+                if not issueSummary or not issueSummary.strip():
+                    issueSummary = "Upper (-) +0% | Lower (-) -0%"
                     
                 img_path = create_card_v2(issueName, changeUpDown, currentPrice, f"{percentChange}%", change, issueSummary)
                 up_down_equal = ""
