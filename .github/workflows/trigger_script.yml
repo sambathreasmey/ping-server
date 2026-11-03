@@ -34,6 +34,14 @@ jobs:
           ISSUE_SUMMARIES: ${{ toJSON(github.event.client_payload.issue_summaries) }}
         run: python my_script.py
 
+      # ==========================================
+      # INSERT NEW STEP HERE
+      # ==========================================
+      - name: Trigger Repo B Webhook
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        run: python trigger_repo_b.py
+
   # --- JOB 2: Callback (Only for ping_15s) ---
   callback:
     runs-on: ubuntu-latest
