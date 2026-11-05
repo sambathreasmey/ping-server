@@ -39,7 +39,7 @@ jobs:
       # ==========================================
       - name: Trigger Repo B Webhook
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GOLD_PRICE_UPDATE_API_KEY: ${{ secrets.GOLD_PRICE_UPDATE_API_KEY }}
         run: python update_gold_price.py
 
   # --- JOB 2: Callback (Only for ping_15s) ---
