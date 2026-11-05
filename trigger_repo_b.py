@@ -26,5 +26,5 @@ def trigger_webhook():
         # Silently ignore all network errors or failures as requested
         pass
 
-if __name__ == "__main__":
-    trigger_webhook()
+# if __name__ == "__main__":
+#     trigger_webhook()
