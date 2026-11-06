@@ -35,11 +35,29 @@ jobs:
           ISSUE_SUMMARIES: ${{ toJSON(github.event.client_payload.issue_summaries) }}
         run: python my_script.py
 
-      # Non-critical step: a failure here must NOT fail the job or block the callback
-      # (update_gold_price.py retries internally, so no shell retry loop is needed)
-      - name: Trigger Repo B Webhook
-        continue-on-error: true
-        timeout-minutes: 5
+  # --- JOB 1b: Gold price update (parallel, non-critical) ---
+  # Runs alongside run-tracker. The callback does NOT depend on it, so a slow or
+  # failing gold update can never delay the tracker or skip the callback.
+  update-gold:
+    if: github.event.action == 'csx-tracking' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # update_gold_price.py retries internally, so no shell retry loop is needed
+      - name: Update gold price
         env:
           GOLD_PRICE_UPDATE_API_KEY: ${{ secrets.GOLD_PRICE_UPDATE_API_KEY }}
         run: python update_gold_price.py
