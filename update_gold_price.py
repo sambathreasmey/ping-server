@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import time
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 import requests
@@ -16,6 +17,13 @@ GOLD_PRICE_API_URL = (
 )
 PRICE_PRECISION = Decimal("0.000001")
 TROY_OUNCE_TO_DAMLUNG = Decimal("1.2")
+
+# Retry / timeout settings
+WS_OPEN_TIMEOUT = 30        # websocket handshake timeout (was 10)
+WS_ATTEMPT_TIMEOUT = 40     # total time allowed per websocket attempt
+WS_MAX_ATTEMPTS = 3
+API_MAX_ATTEMPTS = 3
+RETRY_DELAY = 3             # seconds, multiplied by attempt number
 
 
 def _decode_update_packet(response):
@@ -53,10 +61,10 @@ def _price_per_damlung(ounce_price):
     )
 
 
-async def fetch_price_per_damlung():
+async def _fetch_price_once():
     async with websockets.connect(
         SOCKET_IO_URL,
-        open_timeout=10,
+        open_timeout=WS_OPEN_TIMEOUT,
         close_timeout=5,
         ping_interval=20,
         ping_timeout=20,
@@ -84,7 +92,25 @@ async def fetch_price_per_damlung():
                 continue
 
 
-def update_backend_price(price_per_damlung, api_key):
+async def fetch_price_per_damlung():
+    last_error = None
+    for attempt in range(1, WS_MAX_ATTEMPTS + 1):
+        try:
+            return await asyncio.wait_for(_fetch_price_once(), timeout=WS_ATTEMPT_TIMEOUT)
+        except Exception as exc:  # timeouts, connection errors, bad handshake
+            last_error = exc
+            print(
+                f"Price fetch attempt {attempt}/{WS_MAX_ATTEMPTS} failed: "
+                f"{type(exc).__name__}: {exc}"
+            )
+            if attempt < WS_MAX_ATTEMPTS:
+                await asyncio.sleep(RETRY_DELAY * attempt)
+    raise RuntimeError(
+        f"Could not fetch gold price after {WS_MAX_ATTEMPTS} attempts"
+    ) from last_error
+
+
+def _post_price(price_per_damlung, api_key):
     response = requests.post(
         GOLD_PRICE_API_URL,
         json={"price_per_damlung": str(price_per_damlung)},
@@ -95,6 +121,28 @@ def update_backend_price(price_per_damlung, api_key):
     result = response.json()
     if not isinstance(result, dict) or result.get("code") != 0:
         raise RuntimeError("Gold price API returned an unsuccessful response")
+    return result
+
+
+def update_backend_price(price_per_damlung, api_key):
+    result = None
+    last_error = None
+    for attempt in range(1, API_MAX_ATTEMPTS + 1):
+        try:
+            result = _post_price(price_per_damlung, api_key)
+            break
+        except (requests.RequestException, RuntimeError, ValueError) as exc:
+            last_error = exc
+            print(
+                f"Backend update attempt {attempt}/{API_MAX_ATTEMPTS} failed: "
+                f"{type(exc).__name__}: {exc}"
+            )
+            if attempt < API_MAX_ATTEMPTS:
+                time.sleep(RETRY_DELAY * attempt)
+    if result is None:
+        raise RuntimeError(
+            f"Backend update failed after {API_MAX_ATTEMPTS} attempts"
+        ) from last_error
 
     data = result.get("data") or {}
     if not isinstance(data, dict):
@@ -117,7 +165,7 @@ async def main():
     if not api_key:
         raise RuntimeError("GOLD_PRICE_UPDATE_API_KEY GitHub secret is not configured")
 
-    price_per_damlung = await asyncio.wait_for(fetch_price_per_damlung(), timeout=45)
+    price_per_damlung = await fetch_price_per_damlung()
     update_backend_price(price_per_damlung, api_key)
 
 
