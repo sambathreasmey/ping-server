@@ -10,6 +10,7 @@ jobs:
   run-tracker:
     if: github.event.action == 'csx-tracking' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     outputs:
       callback_data: ${{ steps.tracker_step.outputs.callback_data }}
     steps:
@@ -20,7 +21,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          cache: 'pip' # This handles the caching logic for you
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -34,37 +35,46 @@ jobs:
           ISSUE_SUMMARIES: ${{ toJSON(github.event.client_payload.issue_summaries) }}
         run: python my_script.py
 
-      # ==========================================
-      # INSERT NEW STEP HERE
-      # ==========================================
+      # Non-critical step: a failure here must NOT fail the job or block the callback
+      # (update_gold_price.py retries internally, so no shell retry loop is needed)
       - name: Trigger Repo B Webhook
+        continue-on-error: true
+        timeout-minutes: 5
         env:
           GOLD_PRICE_UPDATE_API_KEY: ${{ secrets.GOLD_PRICE_UPDATE_API_KEY }}
         run: python update_gold_price.py
 
-  # --- JOB 2: Callback (Only for ping_15s) ---
+  # --- JOB 2: Callback for csx-tracking (runs on success OR failure) ---
   callback:
     runs-on: ubuntu-latest
     needs: run-tracker
-    if: always() && needs.run-tracker.result == 'success'
+    timeout-minutes: 15
+    # Run whether tracker succeeded or failed; skip only if the tracker job was skipped
+    # (e.g. when the event was daily_summary).
+    if: >-
+      always() &&
+      (needs.run-tracker.result == 'success' || needs.run-tracker.result == 'failure')
     steps:
       - name: Post Callback with Retry
         env:
           CALLBACK_SECRET: ${{ secrets.CALLBACK_URL }}
           CALLBACK_DATA: ${{ needs.run-tracker.outputs.callback_data }}
+          JOB_RESULT: ${{ needs.run-tracker.result }}
         run: |
           URL="${CALLBACK_SECRET:-https://youtube.com/trigger_callback}"
           DATA_PAYLOAD="${CALLBACK_DATA:-[]}"
 
-          # Construct clean JSON
-          PAYLOAD=$(cat <<EOF
-          {
-            "status": "success",
-            "event_type": "csx-tracking",
-            "data": $DATA_PAYLOAD
-          }
-          EOF
-          )
+          # If the tracker failed before producing output (or output isn't valid JSON), fall back to []
+          if ! echo "$DATA_PAYLOAD" | jq -e . >/dev/null 2>&1; then
+            echo "callback_data is not valid JSON, using []"
+            DATA_PAYLOAD='[]'
+          fi
+
+          # Build JSON safely with jq (status = "success" or "failure")
+          PAYLOAD=$(jq -n \
+            --arg status "$JOB_RESULT" \
+            --argjson data "$DATA_PAYLOAD" \
+            '{status: $status, event_type: "csx-tracking", data: $data}')
 
           MAX_RETRIES=15
           RETRY_INTERVAL=10
@@ -72,9 +82,7 @@ jobs:
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
             echo "Attempt $ATTEMPT of $MAX_RETRIES..."
-            
-            # 1. Increased connect-timeout to 15s and max-time to 30s
-            # 2. Added '|| CURL_EXIT_CODE=$?' to catch exit code 28 gracefully without crashing
+
             CURL_EXIT_CODE=0
             HTTP_STATUS=$(curl -s -w "%{http_code}" -o response.txt \
               --connect-timeout 15 \
@@ -83,16 +91,14 @@ jobs:
               -H "Content-Type: application/json" \
               -d "$PAYLOAD") || CURL_EXIT_CODE=$?
 
-            # Check if curl itself failed (like timeout 28)
             if [ $CURL_EXIT_CODE -ne 0 ]; then
-              echo "Curl failed with exit code $CURL_EXIT_CODE (Network timeout/issue)."
+              echo "Curl failed with exit code $CURL_EXIT_CODE (network timeout/issue)."
               echo "Retrying in ${RETRY_INTERVAL}s..."
               sleep $RETRY_INTERVAL
               ATTEMPT=$((ATTEMPT + 1))
               continue
             fi
 
-            # Check HTTP Status if curl succeeded
             if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
               echo "Callback successful (HTTP $HTTP_STATUS)!"
               echo "Server Response: $(cat response.txt)"
@@ -109,10 +115,11 @@ jobs:
           echo "Error: Max retries reached. Callback failed."
           exit 1
 
-  # --- JOB 3: Different Logic for a Different Type ---
+  # --- JOB 3: Daily Summary ---
   summary-report:
     if: github.event.action == 'daily_summary'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -121,7 +128,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          cache: 'pip' # This handles the caching logic for you
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -130,44 +137,54 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           SEND_CHAT_ID: ${{ secrets.SEND_CHAT_ID }}
+          PAYLOAD_CHAT_ID: ${{ github.event.client_payload.chat_id }}
         run: |
-          echo "Processing daily summary for ${{ github.event.client_payload.chat_id }}"
+          echo "Processing daily summary for $PAYLOAD_CHAT_ID"
           python daily_summary_script.py
 
-  # --- JOB 2: Callback (Only for ping_15s) ---
+  # --- JOB 4: Callback for daily_summary (runs on success OR failure) ---
   summary_callback:
     runs-on: ubuntu-latest
     needs: summary-report
-    if: always() && needs.summary-report.result == 'success'
+    timeout-minutes: 40
+    if: >-
+      always() &&
+      (needs.summary-report.result == 'success' || needs.summary-report.result == 'failure')
     steps:
       - name: Post Callback with Retry
+        env:
+          CALLBACK_SECRET: ${{ secrets.CALLBACK_URL }}
+          JOB_RESULT: ${{ needs.summary-report.result }}
         run: |
-          URL="${{ secrets.CALLBACK_URL || 'https://youtube.com/trigger_callback' }}"
-          PAYLOAD='{
-            "status": "success",
-            "event_type": "daily_summary"
-          }'
-          
-          MAX_RETRIES=180 # 30 minute
-          RETRY_INTERVAL=10 # every 10 second
+          URL="${CALLBACK_SECRET:-https://youtube.com/trigger_callback}"
+
+          PAYLOAD=$(jq -n \
+            --arg status "$JOB_RESULT" \
+            '{status: $status, event_type: "daily_summary"}')
+
+          MAX_RETRIES=180   # ~30 minutes
+          RETRY_INTERVAL=10 # every 10 seconds
           ATTEMPT=1
 
           while [ $ATTEMPT -le $MAX_RETRIES ]; do
             echo "Attempt $ATTEMPT of $MAX_RETRIES..."
-            
-            # Execute curl and capture HTTP status code
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL" \
-              -H "Content-Type: application/json" \
-              -d "$PAYLOAD")
 
-            if [ "$RESPONSE" -ge 200 ] && [ "$RESPONSE" -lt 300 ]; then
-              echo "Callback successful (HTTP $RESPONSE)!"
+            CURL_EXIT_CODE=0
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 15 \
+              --max-time 30 \
+              -X POST "$URL" \
+              -H "Content-Type: application/json" \
+              -d "$PAYLOAD") || CURL_EXIT_CODE=$?
+
+            if [ $CURL_EXIT_CODE -eq 0 ] && [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+              echo "Callback successful (HTTP $HTTP_STATUS)!"
               exit 0
-            else
-              echo "Callback failed with status $RESPONSE. Retrying in ${RETRY_INTERVAL}s..."
-              sleep $RETRY_INTERVAL
-              ATTEMPT=$((ATTEMPT + 1))
             fi
+
+            echo "Callback failed (curl exit $CURL_EXIT_CODE, HTTP $HTTP_STATUS). Retrying in ${RETRY_INTERVAL}s..."
+            sleep $RETRY_INTERVAL
+            ATTEMPT=$((ATTEMPT + 1))
           done
 
           echo "Error: Max retries reached. Callback failed."
